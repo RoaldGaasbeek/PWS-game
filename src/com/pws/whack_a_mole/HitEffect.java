@@ -1,12 +1,12 @@
-package com.zetcode;
+package com.pws.whack_a_mole;
 
 import com.pws.Sprite;
 
 import java.awt.event.MouseEvent;
 
-public class Target extends Sprite {
+public class HitEffect extends Sprite {
 
-    public Target(double x, double y) {
+    public HitEffect(double x, double y) {
         super(x, y);
 
         initTarget();

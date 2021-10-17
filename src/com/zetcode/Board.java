@@ -20,7 +20,7 @@ import javax.swing.Timer;
  * Author: Jan Bodnar
  * Website: http://zetcode.com
  */
-public class Board<var> extends JPanel {
+public class Board extends JPanel {
     protected static final int BOARD_WIDTH = 600;
     protected static final int BOARD_HEIGHT = 400;
     private final int NUM_OF_BALLOONS = 20;
@@ -92,6 +92,7 @@ public class Board<var> extends JPanel {
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         drawScore(g2d);
+
         for (Balloon balloon : balloons) {
             g2d.drawImage(balloon.getImage(), (int) balloon.getX(),
                     (int) balloon.getY(), this);

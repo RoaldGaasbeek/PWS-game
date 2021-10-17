@@ -1,5 +1,7 @@
 package com.zetcode;
 
+import com.pws.Sprite;
+
 import java.util.Random;
 
 

@@ -1,8 +1,10 @@
 package com.zetcode;
 
+import com.pws.Sprite;
+
 import java.util.Random;
 
-public class Coloredpanel extends com.zetcode.Sprite {
+public class Coloredpanel extends Sprite {
     private final int NUMBER_OF_BALLOON_TYPES = 5;
     private int speed = 2;
 

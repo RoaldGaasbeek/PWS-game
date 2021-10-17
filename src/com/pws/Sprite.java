@@ -1,9 +1,11 @@
-package com.zetcode;
+package com.pws;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
-public class Sprite<var> {
+import static java.awt.Image.SCALE_DEFAULT;
+
+public class Sprite {
     protected double x;
     protected double y;
     protected int width;
@@ -19,12 +21,24 @@ public class Sprite<var> {
 
     protected void loadImage(String imageName) {
         ImageIcon imageIcon = new ImageIcon(imageName);
-        image = ((ImageIcon) imageIcon).getImage();
+
+        image = imageIcon.getImage();
+    }
+
+    protected void loadImage(String imageName, int width, int height) {
+        ImageIcon imageIcon = new ImageIcon(imageName);
+
+        this.width = width;
+        this.height = width;
+
+        image = imageIcon.getImage().getScaledInstance(width, height, SCALE_DEFAULT);
     }
 
     protected void getImageDimensions() {
-        width = image.getWidth(null);
-        height = image.getHeight(null);
+        if (width == 0) {
+            width = image.getWidth(null);
+            height = image.getHeight(null);
+        }
     }
 
     public Image getImage() {
