@@ -21,7 +21,7 @@ public class HitEffect extends Sprite {
 
     public void mouseMoved(MouseEvent e) {
 
-        x = e.getX();
-        y = e.getY();
+        x = e.getX() - width*0.5;
+        y = e.getY() - height*0.5;
     }
 }

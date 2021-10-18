@@ -4,6 +4,10 @@ import com.pws.Sprite;
 
 
 public class Mole extends Sprite {
+
+    public static final int MOLE_WIDTH = 70;
+    public static final int MOLE_HEIGHT = 75;
+
     public Mole(int x, int y) {
         super(x, y);
 
@@ -11,7 +15,7 @@ public class Mole extends Sprite {
     }
 
     private void initMole() {
-        loadImage("src/resources/mole1.png", 50, 50);
+        loadImage("src/resources/mole1.png", MOLE_WIDTH, MOLE_HEIGHT);
         getImageDimensions();
     }
 }
