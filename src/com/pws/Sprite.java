@@ -60,4 +60,9 @@ public class Sprite {
     public void setVisible(Boolean visible) {
         this.visible = visible;
     }
+
+    public void setXY(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
 }
