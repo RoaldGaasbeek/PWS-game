@@ -33,8 +33,9 @@ public class Board extends JPanel {
 
     private void initBoard() {
         setPreferredSize(new Dimension(Board.BOARD_WIDTH, Board.BOARD_HEIGHT));
-        Random rand = new Random();
-        moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
+
+        createMoles();
+
 
         // hides cursor
         setCursor(getToolkit().createCustomCursor(
@@ -54,6 +55,19 @@ public class Board extends JPanel {
         timer.start();
     }
 
+    private void createMoles() {
+        Random rand = new Random();
+
+//        moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
+
+        for (int row = 1; row <= 3; row++) {
+            for (int column = 1; column <= 3; column++) {
+//                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
+                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20 ));
+            }
+        }
+    }
+
 
     private void showMole() {
         updateMoles();
@@ -67,8 +81,12 @@ public class Board extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
 
         // For now we only have one mole.
-        Mole mole = moles.get(0);
-        g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
+        //Mole mole = moles.get(0);
+
+        for (Mole mole : moles) {
+            g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
+        }
+
         if (isRunning) {
             doDrawing(g);
         } else {
@@ -91,8 +109,8 @@ public class Board extends JPanel {
             double by = mole.getY();
 
             if (mole.isVisible()) {
-                lifespan ++;
-                if (lifespan > PERIOD * 200){
+                lifespan++;
+                if (lifespan > PERIOD * 200) {
                     mole.setVisible(false);
                     lifespan = 0;
                 }
@@ -105,6 +123,7 @@ public class Board extends JPanel {
             }
         }
     }
+
     private void hit(int mx, int my) {
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
