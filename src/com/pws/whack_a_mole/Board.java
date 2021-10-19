@@ -8,6 +8,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.pws.whack_a_mole.Mole.MOLE_HEIGHT;
 import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
@@ -17,14 +18,15 @@ public class Board extends JPanel {
     protected static final int BOARD_WIDTH = 600;
     protected static final int BOARD_HEIGHT = 400;
     private final int NUM_OF_BALLOONS = 20;
-
+    private List<Mole> moles;
     private final int TARGET_WIDTH = 24;
-    private final int PERIOD = 60;
+    private final int PERIOD = 1000 / 60;
     private int molesHit = 0;
     private HitEffect hitEffect;
     private Timer timer;
     private boolean isRunning = true;
-    private List<Mole> moles = new ArrayList<>();
+    private List<Mole> Moles = new ArrayList<>();
+    private int lifespan;
 
     public Board() {
         initBoard();
@@ -32,7 +34,8 @@ public class Board extends JPanel {
 
     private void initBoard() {
         setPreferredSize(new Dimension(Board.BOARD_WIDTH, Board.BOARD_HEIGHT));
-        moles.add(new Mole(50, 50));
+        Random rand = new Random();
+        Moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
 
         // hides cursor
         setCursor(getToolkit().createCustomCursor(
@@ -54,7 +57,7 @@ public class Board extends JPanel {
 
 
     private void showMole() {
-//        updateMoles();
+        updateMoles();
         repaint();
     }
 
@@ -65,16 +68,15 @@ public class Board extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
 
         // For now we only have one mole.
-        Mole mole = moles.get(0);
+        Mole mole = Moles.get(0);
         g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
-
-//        if (isRunning) {
+        if (isRunning) {
             doDrawing(g);
-//        } else {
-//            gameOver(g);
-//        }
+        } else {
+            gameOver(g);
+        }
 
-//        Toolkit.getDefaultToolkit().sync();
+        Toolkit.getDefaultToolkit().sync();
     }
 
     private void doDrawing(Graphics g) {
@@ -84,16 +86,42 @@ public class Board extends JPanel {
         g2d.drawImage(hitEffect.getImage(), (int) hitEffect.getX(), (int) hitEffect.getY(), this);
     }
 
-
+    private void updateMoles() {
+        for (int i = 0; i < Moles.size(); i++) {
+            Mole mole = Moles.get(i);
+            double by = mole.getY();
+            if (by + MOLE_HEIGHT < 0) {
+//                molesMissed++;
+                mole.setVisible(false);
+            }
+            if (mole.isVisible()) {
+                lifespan ++;
+                if (lifespan > PERIOD * 200){
+                    mole.setVisible(false);
+                    lifespan = 0;
+                }
+            } else {
+                Moles.remove(i);
+                if (Moles.isEmpty()) {
+                    timer.stop();
+                    isRunning = false;
+                    setCursor(Cursor.getDefaultCursor());
+                }
+            }
+        }
+    }
     private void hit(int mx, int my) {
-        for (int i = 0; i < moles.size(); i++) {
-            Mole mole = moles.get(i);
+        for (int i = 0; i < Moles.size(); i++) {
+            Mole mole = Moles.get(i);
 
             Ellipse2D ellipse = new Ellipse2D.Double(mole.getX(), mole.getY(), MOLE_WIDTH, MOLE_HEIGHT);
 
             if (ellipse.contains(mx, my)) {
                 mole.setVisible(false);
                 molesHit++;
+                Random rand = new Random();
+                Moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
+                showMole();
             }
         }
     }
@@ -107,6 +135,7 @@ public class Board extends JPanel {
     }
 
     private void gameOver(Graphics g) {
+
     }
 
     private class MAdapter extends MouseMotionAdapter {
