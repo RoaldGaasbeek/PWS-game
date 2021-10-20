@@ -1,17 +1,18 @@
 package com.pws.whack_a_mole;
 
-
+import java.util.ArrayList;
+import java.lang.Math;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import static com.pws.whack_a_mole.Mole.MOLE_HEIGHT;
 import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
+import static com.zetcode.SmallestInArray.getSmallest;
 
 
 public class Board extends JPanel {
@@ -25,8 +26,7 @@ public class Board extends JPanel {
     private Timer timer;
     private boolean isRunning = true;
     private List<Mole> moles = new ArrayList<>();
-    private int lifespan;
-
+    private Random rand = new Random();
     public Board() {
         initBoard();
     }
@@ -51,7 +51,7 @@ public class Board extends JPanel {
         Point p = MouseInfo.getPointerInfo().getLocation();
         hitEffect = new HitEffect(p.getX(), p.getY());
 
-        timer = new Timer(PERIOD, new GameCycle() );
+        timer = new Timer(PERIOD, new GameCycle());
         timer.start();
     }
 
@@ -63,7 +63,7 @@ public class Board extends JPanel {
         for (int row = 1; row <= 3; row++) {
             for (int column = 1; column <= 3; column++) {
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
-                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20 , rand.nextInt(151)));
+                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20, rand.nextInt(151)));
             }
         }
     }
@@ -129,6 +129,33 @@ public class Board extends JPanel {
         }
     }
 
+    private int givecoordinates (String xory) {
+        int randX = 200;
+        int randY = 200;
+        int dx = 1000;
+        int dy = 1000;
+        ArrayList<Integer> dxs = new ArrayList<Integer>();
+        ArrayList<Integer> dys = new ArrayList<Integer>();
+        while ((Math.sqrt(dx*dx + dy*dy)) > (MOLE_WIDTH + MOLE_HEIGHT)) {
+            randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
+            randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
+            for (int a = 0; a < moles.size(); a++) {
+                Mole mole1 = moles.get(a);
+                dxs.add((int) Math.abs( (randX - mole1.getX())));
+                dys.add(Math.abs((int) (randY - mole1.getY())));
+            }
+            dx = (getSmallest(dxs, 9));
+            dy = (getSmallest(dys, 9));
+            dxs.clear();
+            dys.clear();
+
+        }
+        if (xory == "x") {
+            return (randX);
+        } else {
+            return (randY);
+        }
+    }
     private void whack(int mx, int my) {
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
@@ -137,8 +164,7 @@ public class Board extends JPanel {
 
             if (ellipse.contains(mx, my) && mole.isVisible()) {
                 molesWhacked++;
-                Random rand = new Random();
-                mole.setXY(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT));
+                mole.setXY(givecoordinates("x"), givecoordinates("y"));
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
                 mole.setVisible(false);
             }

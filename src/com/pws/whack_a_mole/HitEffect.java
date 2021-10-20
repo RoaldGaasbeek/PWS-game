@@ -1,10 +1,10 @@
 package com.pws.whack_a_mole;
 
 import com.pws.Sprite;
-
 import java.awt.event.MouseEvent;
 
 public class HitEffect extends Sprite {
+
 
     public HitEffect(double x, double y) {
         super(x, y);
@@ -15,7 +15,6 @@ public class HitEffect extends Sprite {
     private void initTarget() {
 
         loadImage("src/resources/target.png");
-        getImageDimensions();
     }
 
 
