@@ -72,6 +72,7 @@ public class Board extends JPanel {
     private void showMole() {
         updateMoles();
         repaint();
+
     }
 
     @Override
@@ -128,11 +129,17 @@ public class Board extends JPanel {
             Ellipse2D ellipse = new Ellipse2D.Double(mole.getX(), mole.getY(), MOLE_WIDTH, MOLE_HEIGHT);
 
             if (ellipse.contains(mx, my)) {
-//                mole.setVisible(false);
+                mole.setVisible(false);
                 molesWhacked++;
-                Random rand = new Random();
-                mole.setXY(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT));
+
+
+
+
+//                Random rand = new Random();
+//                mole.setXY(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT));
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
+            }
+            else{
                 showMole();
             }
         }
@@ -143,7 +150,7 @@ public class Board extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         String label1 = String.format("Score %d", molesWhacked);
-        g2d.drawString(label1, 10, 15);
+        g2d.drawString(label1, 10, 20);
     }
 
     private void gameOver(Graphics g) {
