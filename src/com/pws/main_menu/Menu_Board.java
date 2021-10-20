@@ -1,27 +1,17 @@
 package com.pws.main_menu;
 
-import com.pws.whack_a_mole.Board;
-import com.pws.whack_a_mole.Game;
 import com.pws.whack_a_mole.HitEffect;
-import com.pws.main_menu.Main_menu_picture;
-import com.pws.whack_a_mole.Mole;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.pws.main_menu.Main_menu_picture.PICTURE_HEIGHT;
-import static com.pws.main_menu.Main_menu_picture.PICTURE_WIDTH;
 import static com.pws.main_menu.Button.BUTTON_HEIGHT;
 import static com.pws.main_menu.Button.BUTTON_WIDTH;
-import static com.pws.whack_a_mole.Mole.MOLE_HEIGHT;
-import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
 
 
 public class Menu_Board extends JPanel {
@@ -61,7 +51,7 @@ public class Menu_Board extends JPanel {
         Random rand = new Random();
 
 //        moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
-        buttons.add(new Button(BOARD_WIDTH-BUTTON_WIDTH, BOARD_HEIGHT-BUTTON_HEIGHT, "whack-a-mole" ));
+        buttons.add(new Button(BOARD_WIDTH-BUTTON_WIDTH, BOARD_HEIGHT-BUTTON_HEIGHT, "whac-a-mole" ));
         buttons.add(new Button(BOARD_WIDTH-BUTTON_WIDTH, BOARD_HEIGHT-(2* BUTTON_HEIGHT), "memory" ));
 
     }
