@@ -17,14 +17,14 @@ import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
 public class Board extends JPanel {
     protected static final int BOARD_WIDTH = 600;
     protected static final int BOARD_HEIGHT = 400;
-    private final int NUM_OF_BALLOONS = 20;
-    private final int TARGET_WIDTH = 24;
+//    private final int NUM_OF_BALLOONS = 20;
+//    private final int TARGET_WIDTH = 24;
     private final int PERIOD = 1000 / 60;
     private int molesWhacked = 0;
     private HitEffect hitEffect;
     private Timer timer;
     private boolean isRunning = true;
-    private List<Mole> moles = new ArrayList<>();
+    private final List<Mole> moles = new ArrayList<>();
     private int lifespan;
 
     public Board() {
@@ -56,7 +56,7 @@ public class Board extends JPanel {
     }
 
     private void createMoles() {
-        Random rand = new Random();
+        new Random();
 
 //        moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
 
@@ -106,7 +106,6 @@ public class Board extends JPanel {
     private void updateMoles() {
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
-            double by = mole.getY();
 
             if (mole.isVisible()) {
                 lifespan++;
@@ -125,9 +124,7 @@ public class Board extends JPanel {
     }
 
     private void whack(int mx, int my) {
-        for (int i = 0; i < moles.size(); i++) {
-            Mole mole = moles.get(i);
-
+        for (Mole mole : moles) {
             Ellipse2D ellipse = new Ellipse2D.Double(mole.getX(), mole.getY(), MOLE_WIDTH, MOLE_HEIGHT);
 
             if (ellipse.contains(mx, my)) {
