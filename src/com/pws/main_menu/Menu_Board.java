@@ -39,7 +39,7 @@ public class Menu_Board extends JPanel {
 
         addMouseMotionListener(new MAdapter());
         addMouseListener(new MAdapter2());
-        setBackground(Color.GRAY);
+        setBackground(Color.WHITE);
 
         Point p = MouseInfo.getPointerInfo().getLocation();
         hitEffect = new HitEffect(p.getX(), p.getY());
