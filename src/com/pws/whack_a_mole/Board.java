@@ -20,7 +20,7 @@ public class Board extends JPanel {
     private final int NUM_OF_BALLOONS = 20;
     private final int TARGET_WIDTH = 24;
     private final int PERIOD = 1000 / 60;
-    private int molesHit = 0;
+    private int molesWhacked = 0;
     private HitEffect hitEffect;
     private Timer timer;
     private boolean isRunning = true;
@@ -124,7 +124,7 @@ public class Board extends JPanel {
         }
     }
 
-    private void hit(int mx, int my) {
+    private void whack(int mx, int my) {
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
 
@@ -132,7 +132,7 @@ public class Board extends JPanel {
 
             if (ellipse.contains(mx, my)) {
 //                mole.setVisible(false);
-                molesHit++;
+                molesWhacked++;
                 Random rand = new Random();
                 mole.setXY(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT));
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
@@ -145,8 +145,8 @@ public class Board extends JPanel {
         g2d.setFont(new Font("Geneva", Font.BOLD, 12));
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        String label1 = String.format("Hits %d", molesHit);
-        g2d.drawString(label1, 5, BOARD_HEIGHT - 85);
+        String label1 = String.format("Score %d", molesWhacked);
+        g2d.drawString(label1, 10, 15);
     }
 
     private void gameOver(Graphics g) {
@@ -163,7 +163,7 @@ public class Board extends JPanel {
     private class MAdapter2 extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            hit(e.getX(), e.getY());
+            whack(e.getX(), e.getY());
         }
     }
 
