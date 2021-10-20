@@ -64,6 +64,33 @@ public class Menu_Board extends JPanel {
         buttons.add(new Button(BOARD_WIDTH-BUTTON_WIDTH, BOARD_HEIGHT-(2* BUTTON_HEIGHT), "memory" ));
 
     }
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        // For now we only have one mole.
+        //Mole mole = moles.get(0);
+
+        for (Button button : buttons) {
+            g2d.drawImage(button.getImage(), (int) button.getX(), (int) button.getY(), this);
+        }
+
+        if (isRunning) {
+            doDrawing(g);
+        } else {
+
+        }
+
+        Toolkit.getDefaultToolkit().sync();
+    }
+
+    private void doDrawing(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        drawButtonText(g2d);
+
+    }
     private void hit(int mx, int my) {
         for (int i = 0; i < buttons.size(); i++) {
             Button button = buttons.get(i);
@@ -84,7 +111,16 @@ public class Menu_Board extends JPanel {
             }
         }
     }
-
+    private void drawButtonText(Graphics2D g2d) {
+        for (int i = 0; i < buttons.size(); i++) {
+            Button button = buttons.get(i);
+            g2d.setFont(new Font("Geneva", Font.BOLD, 12));
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            String label1 = String.format("play %d", button.getText());
+            g2d.drawString(label1, (int) button.getX(), (int) button.getdY());
+        }
+    }
     private class MAdapter extends MouseMotionAdapter {
         @Override
         public void mouseMoved(MouseEvent e) {
