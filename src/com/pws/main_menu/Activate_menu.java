@@ -19,7 +19,7 @@ public class Activate_menu extends JFrame {
 
         pack();
 
-        setTitle("Whack-a-mole");
+        setTitle("PWS-Games");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }

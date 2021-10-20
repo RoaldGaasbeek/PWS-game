@@ -17,16 +17,13 @@ import static com.pws.main_menu.Button.BUTTON_WIDTH;
 public class Menu_Board extends JPanel {
     protected static final int BOARD_WIDTH = 600;
     protected static final int BOARD_HEIGHT = 400;
-    private final int NUM_OF_BALLOONS = 20;
-    private final int TARGET_WIDTH = 24;
-    private final int PERIOD = 1000 / 60;
-    private int molesHit = 0;
+    private final int FPS = 60;
+    private final int PERIOD = 1000 / FPS;
     private HitEffect hitEffect;
     private Timer timer;
     private boolean isRunning = true;
-    private int lifespan;
     private List<Button> buttons = new ArrayList<>();
-
+    public Main_menu_picture main_menu_pic = new Main_menu_picture(20, 20);
     public Menu_Board() {
 
         initBoard();
@@ -49,8 +46,6 @@ public class Menu_Board extends JPanel {
     }
     private void createButtons() {
         Random rand = new Random();
-
-//        moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
         buttons.add(new Button(BOARD_WIDTH-BUTTON_WIDTH, BOARD_HEIGHT-BUTTON_HEIGHT, "whac-a-mole" ));
         buttons.add(new Button(BOARD_WIDTH-BUTTON_WIDTH, BOARD_HEIGHT-(2* BUTTON_HEIGHT), "memory" ));
 
@@ -58,12 +53,7 @@ public class Menu_Board extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         Graphics2D g2d = (Graphics2D) g;
-
-        // For now we only have one mole.
-        //Mole mole = moles.get(0);
-
         for (Button button : buttons) {
             g2d.drawImage(button.getImage(), (int) button.getX(), (int) button.getY(), this);
         }
@@ -109,6 +99,7 @@ public class Menu_Board extends JPanel {
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             String label1 = String.format("play " + (String) button.getText());
             g2d.drawString(label1, (int) button.getX(), (int) button.getY() + 25);
+            g2d.drawImage(main_menu_pic.getImage(), (int) main_menu_pic.getX(), (int) main_menu_pic.getY(), this);
         }
     }
     private class MAdapter extends MouseMotionAdapter {
