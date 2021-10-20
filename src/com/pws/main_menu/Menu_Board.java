@@ -38,12 +38,13 @@ public class Menu_Board extends JPanel {
     private List<Button> buttons = new ArrayList<>();
 
     public Menu_Board() {
+
         initBoard();
     }
 
     private void initBoard() {
         setPreferredSize(new Dimension(Menu_Board.BOARD_WIDTH, Menu_Board.BOARD_HEIGHT));
-
+        createButtons();
 
         addMouseMotionListener(new MAdapter());
         addMouseListener(new MAdapter2());
@@ -117,8 +118,8 @@ public class Menu_Board extends JPanel {
             g2d.setFont(new Font("Geneva", Font.BOLD, 12));
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            String label1 = String.format("play %d", button.getText());
-            g2d.drawString(label1, (int) button.getX(), (int) button.getdY());
+            String label1 = String.format("play " + (String) button.getText());
+            g2d.drawString(label1, (int) button.getX(), (int) button.getY() + 25);
         }
     }
     private class MAdapter extends MouseMotionAdapter {
