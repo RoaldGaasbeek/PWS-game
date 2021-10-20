@@ -21,7 +21,7 @@ public class Button extends Sprite {
 
 
     private void initButton() {
-        loadImage("src/resources/button red.png", BUTTON_WIDTH, BUTTON_HEIGHT);
+        loadImage("src/resources/green button.png", BUTTON_WIDTH, BUTTON_HEIGHT);
         getImageDimensions();
     }
 }

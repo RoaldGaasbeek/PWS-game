@@ -101,7 +101,6 @@ public class Menu_Board extends JPanel {
             if (rectangle.contains(mx, my)) {
 //                mole.setVisible(false);
                 if (butText == "whack-a-mole") {
-                    Random rand = new Random();
                     com.pws.whack_a_mole.Game game = new com.pws.whack_a_mole.Game();
                     game.setVisible(true);
                 }
