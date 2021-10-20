@@ -7,11 +7,11 @@ public class Mole extends Sprite {
 
     public static final int MOLE_WIDTH = 70;
     public static final int MOLE_HEIGHT = 75;
-    public boolean visible;
-    public Mole(int x, int y, boolean Visible) {
+    public int lifespan;
+    public Mole(int x, int y, int Lifespan) {
         super(x, y);
-        visible = Visible;
         initMole();
+        lifespan = Lifespan;
     }
 
     private void initMole() {
