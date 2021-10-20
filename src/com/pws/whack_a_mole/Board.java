@@ -63,7 +63,7 @@ public class Board extends JPanel {
         for (int row = 1; row <= 3; row++) {
             for (int column = 1; column <= 3; column++) {
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
-                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20 , rand.nextBoolean()));
+                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20 , rand.nextInt(151)));
             }
         }
     }
@@ -86,6 +86,7 @@ public class Board extends JPanel {
         for (Mole mole : moles) {
             if (mole.isVisible()) {
                 g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
+
             }
         }
 
@@ -108,19 +109,21 @@ public class Board extends JPanel {
     private void updateMoles() {
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
+            mole.lifespan++;
             double by = mole.getY();
 
             if (mole.isVisible()) {
-                lifespan++;
-                if (lifespan > PERIOD * 200) {
+
+                if (mole.lifespan > 120) {
                     mole.setVisible(false);
-                    lifespan = 0;
+                    mole.lifespan = 0;
+                    repaint();
                 }
             } else {
-                if (moles.isEmpty()) {
-                    timer.stop();
-                    isRunning = false;
-                    setCursor(Cursor.getDefaultCursor());
+                if (mole.lifespan > 150) {
+                    mole.setVisible(true);
+                    mole.lifespan = 0;
+                    repaint();
                 }
             }
         }
@@ -132,13 +135,13 @@ public class Board extends JPanel {
 
             Ellipse2D ellipse = new Ellipse2D.Double(mole.getX(), mole.getY(), MOLE_WIDTH, MOLE_HEIGHT);
 
-            if (ellipse.contains(mx, my)) {
+            if (ellipse.contains(mx, my) && mole.isVisible()) {
 //                mole.setVisible(false);
                 molesWhacked++;
                 Random rand = new Random();
                 mole.setXY(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT));
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
-                showMole();
+                mole.setVisible(false);
             }
         }
     }

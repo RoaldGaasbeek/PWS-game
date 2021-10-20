@@ -90,7 +90,7 @@ public class Menu_Board extends JPanel {
 
             if (rectangle.contains(mx, my)) {
 //                mole.setVisible(false);
-                if (butText == "whack-a-mole") {
+                if (butText == "whac-a-mole") {
                     com.pws.whack_a_mole.Game game = new com.pws.whack_a_mole.Game();
                     game.setVisible(true);
                 }
