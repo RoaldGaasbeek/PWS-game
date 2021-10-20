@@ -29,7 +29,7 @@ public class Menu_Board extends JPanel {
     private boolean isRunning = true;
     private int lifespan;
 
-    public Board() {
+    public Menu_Board() {
         initBoard();
     }
 
@@ -39,11 +39,34 @@ public class Menu_Board extends JPanel {
 
         addMouseMotionListener(new MAdapter());
         addMouseListener(new MAdapter2());
-        setBackground(Color.WHITE);
+        setBackground(Color.CYAN);
 
         Point p = MouseInfo.getPointerInfo().getLocation();
         hitEffect = new HitEffect(p.getX(), p.getY());
 
         timer = new Timer(PERIOD, new com.pws.whack_a_mole.Board.GameCycle());
         timer.start();
+
     }
+
+    private class MAdapter extends MouseMotionAdapter {
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            hitEffect.mouseMoved(e);
+        }
+    }
+
+    private class MAdapter2 extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            hit(e.getX(), e.getY());
+        }
+    }
+
+    private class GameCycle implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showMole();
+        }
+    }
+}
