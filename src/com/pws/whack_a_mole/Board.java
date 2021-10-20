@@ -51,7 +51,7 @@ public class Board extends JPanel {
         Point p = MouseInfo.getPointerInfo().getLocation();
         hitEffect = new HitEffect(p.getX(), p.getY());
 
-        timer = new Timer(PERIOD, new GameCycle());
+        timer = new Timer(PERIOD, new GameCycle() );
         timer.start();
     }
 
