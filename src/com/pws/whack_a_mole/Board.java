@@ -136,7 +136,6 @@ public class Board extends JPanel {
             Ellipse2D ellipse = new Ellipse2D.Double(mole.getX(), mole.getY(), MOLE_WIDTH, MOLE_HEIGHT);
 
             if (ellipse.contains(mx, my) && mole.isVisible()) {
-//                mole.setVisible(false);
                 molesWhacked++;
                 Random rand = new Random();
                 mole.setXY(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT));
