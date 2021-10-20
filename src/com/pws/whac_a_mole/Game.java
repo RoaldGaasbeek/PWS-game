@@ -1,4 +1,4 @@
-package com.pws.whack_a_mole;
+package com.pws.whac_a_mole;
 
 
 import javax.swing.*;

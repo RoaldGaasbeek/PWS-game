@@ -1,4 +1,4 @@
-package com.pws.whack_a_mole;
+package com.pws.whac_a_mole;
 
 
 import javax.swing.*;
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.pws.whack_a_mole.Mole.MOLE_HEIGHT;
-import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
+import static com.pws.whac_a_mole.Mole.MOLE_HEIGHT;
+import static com.pws.whac_a_mole.Mole.MOLE_WIDTH;
 
 
 public class Board extends JPanel {
