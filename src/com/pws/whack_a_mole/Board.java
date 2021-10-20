@@ -63,7 +63,7 @@ public class Board extends JPanel {
         for (int row = 1; row <= 3; row++) {
             for (int column = 1; column <= 3; column++) {
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
-                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20 ));
+                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20 , rand.nextBoolean()));
             }
         }
     }
@@ -84,7 +84,9 @@ public class Board extends JPanel {
         //Mole mole = moles.get(0);
 
         for (Mole mole : moles) {
-            g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
+            if (mole.isVisible()) {
+                g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
+            }
         }
 
         if (isRunning) {
