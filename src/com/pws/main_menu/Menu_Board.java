@@ -1,6 +1,6 @@
 package com.pws.main_menu;
 
-import com.pws.whac_a_mole.HitEffect;
+import com.pws.whack_a_mole.HitEffect;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,7 +91,7 @@ public class Menu_Board extends JPanel {
             if (rectangle.contains(mx, my)) {
 //                mole.setVisible(false);
                 if (butText == "whack-a-mole") {
-                    com.pws.whac_a_mole.Game game = new com.pws.whac_a_mole.Game();
+                    com.pws.whack_a_mole.Game game = new com.pws.whack_a_mole.Game();
                     game.setVisible(true);
                 }
 
