@@ -1,2 +1,14 @@
-/.idea
-
+.gradle/
+build/
+.settings
+*.iml
+.idea
+bin/
+.project
+.classpath
+target/
+*.orig
+classes/
+out/
+src/main/webapp/swagger.json
+node_modules/
