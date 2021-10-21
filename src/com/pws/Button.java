@@ -1,6 +1,7 @@
 package com.pws;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Button extends Sprite {
@@ -8,7 +9,7 @@ public class Button extends Sprite {
     public static final int BUTTON_WIDTH = 140;
     public static final int BUTTON_HEIGHT = 50;
     public String Text;
-
+    public static List<Button> buttons = new ArrayList<Button>();
     public Button(int x, int y, String text) {
         super(x, y);
         initButton();
@@ -19,26 +20,33 @@ public class Button extends Sprite {
         return Text;
     }
 
-    public static void createButtons(ArrayList<Button> list, int amount, String text1, String text2, String text3, int boardWidth, int boardHeight) {
+    public static List<Integer> createButtons(int amount, String text1, String text2, String text3, int boardWidth, int boardHeight) {
+        List<Integer> indexNumbers = new ArrayList<Integer>();
         Random rand = new Random();
+        int currentSize = buttons.size();
         for (int i = 0; i < amount; i++) {
             if (i == 0) {
 //            buttons.add(new Button(BOARD_WIDTH - BUTTON_WIDTH, BOARD_HEIGHT - BUTTON_HEIGHT, "whac-a-mole"));
 //            buttons.add(new Button(BOARD_WIDTH - BUTTON_WIDTH, BOARD_HEIGHT - (2 * BUTTON_HEIGHT), "memory"));
-                list.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text1));
+                buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text1));
+                indexNumbers.add(currentSize);
             } else if (i == 1) {
-                list.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text2));
+                buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text2));
+                indexNumbers.add(currentSize+1);
             } else if (i == 2) {
-                list.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text3));
+                buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text3));
+                indexNumbers.add(currentSize+2);
             } else {
-                list.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), "..."));
+                buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), "..."));
             }
         }
+        return indexNumbers;
+
     }
 
-    public static void drawButtonText(ArrayList<com.pws.Button> list, Graphics2D g2d) {
-        for (int i = 0; i < list.size(); i++) {
-            Button button = list.get(i);
+    public static void drawButtonText(List<Integer> buttonlist, Graphics2D g2d) {
+        for (int i = buttonlist.get(0); i < buttonlist.get(buttonlist.size()-1); i++) {
+            Button button = buttons.get(i);
             g2d.setFont(new Font("Geneva", Font.BOLD, 12));
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
