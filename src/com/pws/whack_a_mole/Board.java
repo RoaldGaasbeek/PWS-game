@@ -34,6 +34,7 @@ public class Board extends JPanel {
     private int molesWhacked = 0;
     private HitEffect hitEffect;
     private Timer timer;
+    private Timer inGameTimer;
     private boolean isRunning = true;
     private List<Mole> moles = new ArrayList<>();
     private List<com.pws.Button> buttons = new ArrayList<>();
@@ -77,9 +78,10 @@ public class Board extends JPanel {
 
         add(replayButton);
         add(mainMenuButton);
-
+        inGameTimer = new Timer (100, new inGameTimer());
         timer = new Timer(PERIOD, new GameCycle());
         timer.start();
+        inGameTimer.start();
     }
 
     private void createMoles() {
@@ -148,6 +150,10 @@ public class Board extends JPanel {
     }
 
     private void updateMoles() {
+        if (SECONDS_REMAINING <= 0) {
+            isRunning = false;
+            setCursor(Cursor.getDefaultCursor());
+        }
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
             mole.lifespan++;
@@ -175,23 +181,14 @@ public class Board extends JPanel {
         }
     }
 
-    private void updateInGameTimer() {
-        SECONDS_PASSED = (SECONDS_PASSED + ((1 / (double) FPS)));
-        SECONDS_REMAINING = (GAME_LENGTH - SECONDS_PASSED);
-        if (SECONDS_REMAINING <= 0) {
-            isRunning = false;
-            setCursor(Cursor.getDefaultCursor());
-        }
-    }
-
     private int giveCoordinates(String xory) {
-        int randX = 200;
-        int randY = 200;
+        int randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
+        int randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
         int dx = 1000;
         int dy = 1000;
         ArrayList<Integer> dxs = new ArrayList<Integer>();
         ArrayList<Integer> dys = new ArrayList<Integer>();
-        while ((((int) Math.sqrt((dx * dx) + (dy * dy))) > (MOLE_WIDTH + MOLE_HEIGHT)) || (randX < 30 && randY < 60)) {
+        while ((((int) Math.sqrt((dx * dx) + (dy * dy))) > (MOLE_WIDTH + MOLE_HEIGHT)) | (randX < 30 && randY < 60)) {
             dxs.clear();
             dys.clear();
             randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
@@ -199,11 +196,12 @@ public class Board extends JPanel {
             for (int a = 0; a < moles.size(); a++) {
                 Mole mole1 = moles.get(a);
                 dxs.add((int) Math.abs((randX - mole1.getX())));
-                dys.add(Math.abs((int) (randY - mole1.getY())));
+                dys.add((int) Math.abs((randY - mole1.getY())));
             }
             dx = (getSmallest(dxs, 9));
             dy = (getSmallest(dys, 9));
         }
+
         if (xory == "x") {
             return (randX);
         } else {
@@ -225,14 +223,6 @@ public class Board extends JPanel {
                 mole.setVisible(false);
             }
         }
-    }
-
-    private void drawScore(Graphics2D g2d) {
-        g2d.setFont(new Font("Geneva", Font.BOLD, 12));
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        String label1 = String.format("Score %d", molesWhacked);
-        g2d.drawString(label1, 10, 15);
     }
 
     private void gameOver(Graphics g) {
@@ -303,12 +293,20 @@ public class Board extends JPanel {
         return mainMenuButton;
     }
 
+    private void drawScore(Graphics2D g2d) {
+        g2d.setFont(new Font("Geneva", Font.BOLD, 12));
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        String label1 = String.format("Score %d", molesWhacked);
+        g2d.drawString(label1, 10, 15);
+    }
     private void drawTimer(Graphics2D g2d) {
         g2d.setFont(new Font("Geneva", Font.BOLD, 12));
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        String label1 = String.format("Time left: %d", (int) SECONDS_REMAINING);
-        g2d.drawString(label1, 10, 30);
+        // String.format("Time left: %d", (int) SECONDS_REMAINING);
+        String label1 = ("Time left: "+ (int) SECONDS_REMAINING);
+        g2d.drawString( label1, 10, 30);
     }
 
     private class MAdapter extends MouseMotionAdapter {
@@ -325,12 +323,21 @@ public class Board extends JPanel {
         }
     }
 
+    private class inGameTimer implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SECONDS_PASSED = SECONDS_PASSED+ 0.1;
+            SECONDS_REMAINING = (GAME_LENGTH - SECONDS_PASSED);
+
+        }
+    }
+
     private class GameCycle implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (isRunning) {
                 showMole();
-                updateInGameTimer();
+//                updateInGameTimer();
             }
         }
     }
