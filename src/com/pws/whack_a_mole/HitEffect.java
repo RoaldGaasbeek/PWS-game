@@ -1,6 +1,7 @@
 package com.pws.whack_a_mole;
 
 import com.pws.Sprite;
+
 import java.awt.event.MouseEvent;
 
 public class HitEffect extends Sprite {
@@ -20,7 +21,7 @@ public class HitEffect extends Sprite {
 
     public void mouseMoved(MouseEvent e) {
 
-        x = e.getX() - width*0.5;
-        y = e.getY() - height*0.5;
+        x = e.getX() - width * 0.5;
+        y = e.getY() - height * 0.5;
     }
 }

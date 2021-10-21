@@ -8,16 +8,15 @@ public class Button extends Sprite {
     public static final int BUTTON_HEIGHT = 50;
     public String Text;
 
-    public Button (int x, int y, String text) {
+    public Button(int x, int y, String text) {
         super(x, y);
         initButton();
         Text = text;
     }
 
-    public String getText(){
+    public String getText() {
         return Text;
     }
-
 
 
     private void initButton() {
