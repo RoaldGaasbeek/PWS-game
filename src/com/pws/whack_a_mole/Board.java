@@ -1,5 +1,9 @@
 package com.pws.whack_a_mole;
 
+import com.pws.Button;
+import com.pws.main_menu.Menu_Board;
+
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.lang.Math;
 import javax.swing.*;
@@ -10,6 +14,9 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
 
+
+import static com.pws.Button.BUTTON_HEIGHT;
+import static com.pws.Button.BUTTON_WIDTH;
 import static com.pws.whack_a_mole.Mole.MOLE_HEIGHT;
 import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
 import static com.zetcode.SmallestInArray.getSmallest;
@@ -20,16 +27,24 @@ public class Board extends JPanel {
     protected static final int BOARD_HEIGHT = 400;
     private final int NUM_OF_BALLOONS = 20;
     private final int TARGET_WIDTH = 24;
-    private final int PERIOD = 1000 / 60;
+    private final int FPS = 60;
+    private final int PERIOD = 1000 / FPS;
     private final int MAXIMUM_MOLES = 2;
+    private final Game game;
     public int moles_on_screen = 9;
     private int molesWhacked = 0;
     private HitEffect hitEffect;
     private Timer timer;
     private boolean isRunning = true;
     private List<Mole> moles = new ArrayList<>();
+    private List<com.pws.Button> buttons = new ArrayList<>();
     private Random rand = new Random();
-    public Board() {
+    public double SECONDS_PASSED;
+    public double SECONDS_REMAINING;
+    public double GAME_LENGTH = 60;
+
+    public Board(Game game) {
+        this.game = game;
         initBoard();
     }
 
@@ -48,24 +63,25 @@ public class Board extends JPanel {
 
         addMouseMotionListener(new MAdapter());
         addMouseListener(new MAdapter2());
-        setBackground(Color.GRAY);
+        setBackground(Color.gray);
 
         Point p = MouseInfo.getPointerInfo().getLocation();
         hitEffect = new HitEffect(p.getX(), p.getY());
+
 
         timer = new Timer(PERIOD, new GameCycle());
         timer.start();
     }
 
     private void createMoles() {
-        Random rand = new Random();
-
+        SECONDS_PASSED = 0;
+        SECONDS_REMAINING = GAME_LENGTH;
 //        moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
 
         for (int row = 1; row <= 3; row++) {
             for (int column = 1; column <= 3; column++) {
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
-                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20, rand.nextInt(151)));
+                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20, 0 + rand.nextInt(251)));
             }
         }
     }
@@ -85,17 +101,16 @@ public class Board extends JPanel {
         // For now we only have one mole.
         //Mole mole = moles.get(0);
 
-        for (Mole mole : moles) {
-            if (mole.isVisible()) {
-                g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
 
-            }
-        }
 
         if (isRunning) {
             doDrawing(g);
         } else {
             gameOver(g);
+            for (com.pws.Button button : buttons) {
+                g2d.drawImage(button.getImage(), (int) button.getX(), (int) button.getY(), this);
+            }
+            com.pws.main_menu.Menu_Board.drawButtonText((ArrayList<Button>) buttons, g2d);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -104,16 +119,19 @@ public class Board extends JPanel {
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         drawScore(g2d);
-
+        drawTimer(g2d);
+        for (Mole mole : moles) {
+            if (mole.isVisible()) {
+                g2d.drawImage(mole.getImage(), (int) mole.getX(), (int) mole.getY(), this);
+            }
+        }
         g2d.drawImage(hitEffect.getImage(), (int) hitEffect.getX(), (int) hitEffect.getY(), this);
     }
 
     private void updateMoles() {
-
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
             mole.lifespan++;
-            double by = mole.getY();
 
             if (mole.isVisible()) {
 
@@ -138,6 +156,15 @@ public class Board extends JPanel {
         }
     }
 
+    private void updateInGameTimer (){
+        SECONDS_PASSED = (SECONDS_PASSED + ( (1 / (double) FPS)));
+        SECONDS_REMAINING = (GAME_LENGTH-SECONDS_PASSED);
+        if (SECONDS_REMAINING <= 0){
+            isRunning = false;
+            setCursor(Cursor.getDefaultCursor());
+        }
+    }
+
     private int givecoordinates (String xory) {
         int randX = 200;
         int randY = 200;
@@ -145,7 +172,7 @@ public class Board extends JPanel {
         int dy = 1000;
         ArrayList<Integer> dxs = new ArrayList<Integer>();
         ArrayList<Integer> dys = new ArrayList<Integer>();
-        while (((int) Math.sqrt((dx*dx) + (dy*dy))) > (MOLE_WIDTH + MOLE_HEIGHT)) {
+        while ((((int) Math.sqrt((dx*dx) + (dy*dy))) > (MOLE_WIDTH + MOLE_HEIGHT)) || (randX < 30 && randY <60)) {
             dxs.clear();
             dys.clear();
             randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
@@ -164,6 +191,7 @@ public class Board extends JPanel {
             return (randY);
         }
     }
+
     private void whack(int mx, int my) {
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
@@ -178,6 +206,26 @@ public class Board extends JPanel {
                 mole.setVisible(false);
             }
         }
+        for (int i = 0; i < buttons.size(); i++) {
+            com.pws.Button button = buttons.get(i);
+            String buttonText = button.getText();
+            Rectangle2D rectangle = new Rectangle2D.Double(button.getX(), button.getY(), BUTTON_WIDTH, BUTTON_HEIGHT);
+
+            if (rectangle.contains(mx, my)) {
+                if (buttonText == "play again") {
+                    SECONDS_PASSED = 0;
+                    SECONDS_REMAINING = GAME_LENGTH;
+                    molesWhacked = 0;
+                    setCursor(getToolkit().createCustomCursor(
+                            new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
+                            new Point(0, 0),
+                            null));
+                    isRunning = true;
+                } else if (buttonText == "main menu"){
+                    game.setVisible (false);
+                }
+            }
+        }
     }
 
     private void drawScore(Graphics2D g2d) {
@@ -189,7 +237,35 @@ public class Board extends JPanel {
     }
 
     private void gameOver(Graphics g) {
+        for (int i = 0; i < moles.size(); i++) {
+            Mole mole = moles.get(i);
+            mole.setVisible(false);
+        }
+        com.pws.main_menu.Menu_Board.createButtons((ArrayList<Button>) buttons, 2, "play again", "main menu", " ");
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
+        String msg = "Game Over";
+        String msg2 = String.format("Moles hit: %d", molesWhacked);
+        Font myFont = new Font("Geneva", Font.BOLD, 24);
+        FontMetrics fontMetrics = this.getFontMetrics(myFont);
+        g.setFont(myFont);
+        g.drawString(msg,
+                (BOARD_WIDTH - fontMetrics.stringWidth(msg)) / 2,
+                (BOARD_HEIGHT / 2) - fontMetrics.getHeight());
+        g.drawString(msg2, (BOARD_WIDTH -
+                        fontMetrics.stringWidth(msg2)) / 2,
+                (BOARD_HEIGHT / 2) + fontMetrics.getHeight());
+    }
 
+    private void drawTimer(Graphics2D g2d) {
+        g2d.setFont(new Font("Geneva", Font.BOLD, 12));
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        String label1 = String.format("Time left: %d", (int) SECONDS_REMAINING);
+        g2d.drawString(label1, 10, 30);
     }
 
     private class MAdapter extends MouseMotionAdapter {
@@ -209,7 +285,10 @@ public class Board extends JPanel {
     private class GameCycle implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            showMole();
+            if (isRunning){
+                showMole();
+                updateInGameTimer();
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.pws.main_menu;
+package com.pws;
 
 import com.pws.Sprite;
 
