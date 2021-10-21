@@ -40,8 +40,9 @@ public class Board extends JPanel {
     private Random rand = new Random();
     public double SECONDS_PASSED;
     public double SECONDS_REMAINING;
-    public double GAME_LENGTH = 10;
+    public double GAME_LENGTH = 60;
     private JButton replayButton;
+    private JButton mainMenuButton;
 
     public Board(Game game) {
         this.game = game;
@@ -71,8 +72,11 @@ public class Board extends JPanel {
 
         replayButton = createReplayButton();
         replayButton.setVisible(false);
+        mainMenuButton = createMainMenuButton();
+        mainMenuButton.setVisible(false);
 
         add(replayButton);
+        add(mainMenuButton);
 
         timer = new Timer(PERIOD, new GameCycle());
         timer.start();
@@ -126,10 +130,6 @@ public class Board extends JPanel {
             doDrawing(g);
         } else {
             gameOver(g);
-            for (com.pws.Button button : buttons) {
-                g2d.drawImage(button.getImage(), (int) button.getX(), (int) button.getY(), this);
-            }
-            com.pws.main_menu.Menu_Board.drawButtonText((ArrayList<Button>) buttons, g2d);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -225,26 +225,6 @@ public class Board extends JPanel {
                 mole.setVisible(false);
             }
         }
-        for (int i = 0; i < buttons.size(); i++) {
-            com.pws.Button button = buttons.get(i);
-            String buttonText = button.getText();
-            Rectangle2D rectangle = new Rectangle2D.Double(button.getX(), button.getY(), BUTTON_WIDTH, BUTTON_HEIGHT);
-
-            if (rectangle.contains(mx, my)) {
-                if (buttonText == "play again") {
-                    SECONDS_PASSED = 0;
-                    SECONDS_REMAINING = GAME_LENGTH;
-                    molesWhacked = 0;
-                    setCursor(getToolkit().createCustomCursor(
-                            new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-                            new Point(0, 0),
-                            null));
-                    isRunning = true;
-                } else if (buttonText == "main menu") {
-                    game.setVisible(false);
-                }
-            }
-        }
     }
 
     private void drawScore(Graphics2D g2d) {
@@ -257,7 +237,6 @@ public class Board extends JPanel {
 
     private void gameOver(Graphics g) {
         showMoles(false);
-        Menu_Board.createButtons((ArrayList<Button>) buttons, 2, "play again", "main menu", " ");
 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -275,9 +254,7 @@ public class Board extends JPanel {
         g.drawString(msg2, (BOARD_WIDTH -
                         fontMetrics.stringWidth(msg2)) / 2,
                 (BOARD_HEIGHT / 2) + fontMetrics.getHeight());
-
-
-
+        mainMenuButton.setVisible(true);
         replayButton.setVisible(true);
     }
 
@@ -289,13 +266,10 @@ public class Board extends JPanel {
     }
 
     private JButton createReplayButton() {
-        JButton button = new JButton("play again");
-        button.setSize((140), BUTTON_HEIGHT);
-        button.setLocation(BOARD_WIDTH - (BUTTON_WIDTH + 40), BOARD_HEIGHT - 3 * BUTTON_HEIGHT);
-        button.addActionListener(e -> {
-
-            SECONDS_PASSED = 0;
-            SECONDS_REMAINING = GAME_LENGTH;
+        JButton replayButton = new JButton("play again");
+        replayButton.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        replayButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH), BOARD_HEIGHT - 2 * BUTTON_HEIGHT);
+        replayButton.addActionListener(e -> {
             molesWhacked = 0;
             setCursor(getToolkit().createCustomCursor(
                     new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
@@ -309,12 +283,25 @@ public class Board extends JPanel {
             showMoles(true);
 
 
-            button.setVisible(false);
+            replayButton.setVisible(false);
+            mainMenuButton.setVisible(false);
 
         });
-        return button;
+        return replayButton;
     }
+    private JButton createMainMenuButton() {
+        JButton mainMenuButton = new JButton("back to menu");
+        mainMenuButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
+        mainMenuButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT - BUTTON_HEIGHT);
+        mainMenuButton.addActionListener(e -> {
+            game.setVisible(false);
 
+
+            mainMenuButton.setVisible(false);
+
+        });
+        return mainMenuButton;
+    }
 
     private void drawTimer(Graphics2D g2d) {
         g2d.setFont(new Font("Geneva", Font.BOLD, 12));

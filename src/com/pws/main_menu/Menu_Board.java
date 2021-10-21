@@ -24,7 +24,6 @@ public class Menu_Board extends JPanel {
     private HitEffect hitEffect;
     private Timer timer;
     private boolean isRunning = true;
-    private List<com.pws.Button> buttons = new ArrayList<>();
     public Main_menu_picture main_menu_pic = new Main_menu_picture(20, 20);
 
     public Menu_Board() {
@@ -33,21 +32,28 @@ public class Menu_Board extends JPanel {
 
     private void initBoard() {
         setPreferredSize(new Dimension(Menu_Board.BOARD_WIDTH, Menu_Board.BOARD_HEIGHT));
-        createButtons((ArrayList<Button>) buttons, 2, "play Whac-a-Mole", "play Memory", " ");
 
         addMouseMotionListener(new MAdapter());
         addMouseListener(new MAdapter2());
         setBackground(Color.CYAN);
         setLayout(null);
 
-        JButton button = new JButton("play Whac-a-Mole");
-        button.setSize((140), BUTTON_HEIGHT);
-        button.setLocation(BOARD_WIDTH - (BUTTON_WIDTH + 40), BOARD_HEIGHT - 3 * BUTTON_HEIGHT);
-        button.addActionListener(e -> {
+        JButton whacAMoleButton = new JButton("play Whac-a-Mole");
+        whacAMoleButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
+        whacAMoleButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH), BOARD_HEIGHT - 2 * BUTTON_HEIGHT);
+        whacAMoleButton.addActionListener(e -> {
             Game game = new Game();
             game.setVisible(true);
         });
-        add(button);
+        JButton memoryButton = new JButton("play Memory");
+        memoryButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
+        memoryButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  BUTTON_HEIGHT);
+        memoryButton.addActionListener(e -> {
+
+        });
+
+        add(memoryButton);
+        add(whacAMoleButton);
 
         Point p = MouseInfo.getPointerInfo().getLocation();
         hitEffect = new HitEffect(p.getX(), p.getY());
@@ -78,9 +84,6 @@ public class Menu_Board extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        for (com.pws.Button button : buttons) {
-            g2d.drawImage(button.getImage(), (int) button.getX(), (int) button.getY(), this);
-        }
 
         if (isRunning) {
             doDrawing(g);
@@ -93,23 +96,11 @@ public class Menu_Board extends JPanel {
 
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        drawButtonText((ArrayList<Button>) buttons, g2d);
         g2d.drawImage(main_menu_pic.getImage(), (int) main_menu_pic.getX(), (int) main_menu_pic.getY(), this);
     }
 
     private void hit(int mx, int my) {
-        for (int i = 0; i < buttons.size(); i++) {
-            com.pws.Button button = buttons.get(i);
-            String butText = button.getText();
-            Rectangle2D rectangle = new Rectangle2D.Double(button.getX(), button.getY(), BUTTON_WIDTH, BUTTON_HEIGHT);
 
-            if (rectangle.contains(mx, my)) {
-                if (butText == "play Whac-a-Mole") {
-                    com.pws.whack_a_mole.Game game = new com.pws.whack_a_mole.Game();
-                    game.setVisible(true);
-                }
-            }
-        }
     }
 
     public static void drawButtonText(ArrayList<com.pws.Button> list, Graphics2D g2d) {

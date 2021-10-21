@@ -4,7 +4,7 @@ import com.pws.Sprite;
 
 public class Button extends Sprite {
 
-    public static final int BUTTON_WIDTH = 100;
+    public static final int BUTTON_WIDTH = 140;
     public static final int BUTTON_HEIGHT = 50;
     public String Text;
 
