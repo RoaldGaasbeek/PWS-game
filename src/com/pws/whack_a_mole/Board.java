@@ -21,6 +21,8 @@ public class Board extends JPanel {
     private final int NUM_OF_BALLOONS = 20;
     private final int TARGET_WIDTH = 24;
     private final int PERIOD = 1000 / 60;
+    private final int MAXIMUM_MOLES = 2;
+    public int moles_on_screen = 9;
     private int molesWhacked = 0;
     private HitEffect hitEffect;
     private Timer timer;
@@ -107,6 +109,7 @@ public class Board extends JPanel {
     }
 
     private void updateMoles() {
+
         for (int i = 0; i < moles.size(); i++) {
             Mole mole = moles.get(i);
             mole.lifespan++;
@@ -116,14 +119,20 @@ public class Board extends JPanel {
 
                 if (mole.lifespan > 120) {
                     mole.setVisible(false);
+                    mole.setXY(givecoordinates("x"), givecoordinates("y"));
                     mole.lifespan = 0;
+                    moles_on_screen --;
                     repaint();
                 }
             } else {
-                if (mole.lifespan > 150) {
-                    mole.setVisible(true);
+                if (mole.lifespan > 250) {
+                    if (moles_on_screen <= MAXIMUM_MOLES) {
+                        mole.setVisible(true);
+                        mole.lifespan = 0;
+                        moles_on_screen++;
+                        repaint();
+                    }
                     mole.lifespan = 0;
-                    repaint();
                 }
             }
         }
@@ -136,7 +145,9 @@ public class Board extends JPanel {
         int dy = 1000;
         ArrayList<Integer> dxs = new ArrayList<Integer>();
         ArrayList<Integer> dys = new ArrayList<Integer>();
-        while ((Math.sqrt(dx*dx + dy*dy)) > (MOLE_WIDTH + MOLE_HEIGHT)) {
+        while (((int) Math.sqrt((dx*dx) + (dy*dy))) > (MOLE_WIDTH + MOLE_HEIGHT)) {
+            dxs.clear();
+            dys.clear();
             randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
             randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
             for (int a = 0; a < moles.size(); a++) {
@@ -146,9 +157,6 @@ public class Board extends JPanel {
             }
             dx = (getSmallest(dxs, 9));
             dy = (getSmallest(dys, 9));
-            dxs.clear();
-            dys.clear();
-
         }
         if (xory == "x") {
             return (randX);
@@ -164,6 +172,7 @@ public class Board extends JPanel {
 
             if (ellipse.contains(mx, my) && mole.isVisible()) {
                 molesWhacked++;
+                moles_on_screen --;
                 mole.setXY(givecoordinates("x"), givecoordinates("y"));
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
                 mole.setVisible(false);
