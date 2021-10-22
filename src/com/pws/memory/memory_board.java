@@ -9,20 +9,20 @@ import javax.swing.*;
 
 
 public class memory_board extends JPanel {
-    public final int NUM_IMAGES = 13;
+    public final int NUM_IMAGES = 20;
     public final int CELL_SIZE = 40;
     public final int COVER_FOR_CELL = 10;
     public final int MARK_FOR_CELL = 10;
     public final int EMPTY_CELL = 0;
-    public final int MINE_CELL = 9;
+    public final int MINE_CELL = 12;
     public final int COVERED_MINE_CELL = MINE_CELL
             + COVER_FOR_CELL;
     public final int MARKED_MINE_CELL = COVERED_MINE_CELL
             + MARK_FOR_CELL;
     public final int DRAW_MINE = 9;
-    public final int DRAW_COVER = 10;
-    public final int DRAW_MARK = 11;
-    public final int DRAW_WRONG_MARK = 12;
+    public final int DRAW_COVER = 11;
+    public final int DRAW_MARK = 12;
+    public final int DRAW_WRONG_MARK = 13;
     public final int N_MINES = 40;
     public final int N_ROWS = 4;
     public final int N_COLS = 5;
@@ -34,7 +34,7 @@ public class memory_board extends JPanel {
     public Image[] img;
     public int allCells;
     public final JLabel statusbar;
-    public static boolean AmandoIsAPoopiehead = true;
+    public final static boolean AmandoIsAPoopiehead = true;
 
 //was all private in the minesweeper example changed to public for MinesAdapter class
 
@@ -47,7 +47,7 @@ public class memory_board extends JPanel {
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         img = new Image[NUM_IMAGES];
         for (int i = 0; i < NUM_IMAGES; i++) {
-            var path = "src/resources/shapes" + i + ".png";
+            var path = "src/resources/shapes/"+ i + ".png";
             img[i] = (new ImageIcon(path)).getImage();
         }
         addMouseListener(new MinesAdapter());
@@ -169,26 +169,6 @@ public class memory_board extends JPanel {
         for (int i = 0; i < N_ROWS; i++) {
             for (int j = 0; j < N_COLS; j++) {
                 int cell = field[(i * N_COLS) + j];
-                if (inGame && cell == MINE_CELL) {
-                    inGame = false;
-                }
-                if (!inGame) {
-                    if (cell == COVERED_MINE_CELL) {
-                        cell = DRAW_MINE;
-                    } else if (cell == MARKED_MINE_CELL)
-                        cell = DRAW_MARK;
-                } else if (cell > COVERED_MINE_CELL) {
-                    cell = DRAW_WRONG_MARK;
-                } else if (cell > MINE_CELL) {
-                    cell = DRAW_COVER;
-                } else {
-                    if (cell > COVERED_MINE_CELL) {
-                        cell = DRAW_MARK;
-                    } else if (cell > MINE_CELL) {
-                        cell = DRAW_COVER;
-                        uncover++;
-                    }
-                }
                 g.drawImage(img[cell], (j * CELL_SIZE),
                         (i * CELL_SIZE), this);
             }
