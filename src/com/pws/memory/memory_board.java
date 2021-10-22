@@ -34,7 +34,6 @@ public class memory_board extends JPanel {
     public Image[] img;
     public int allCells;
     public final JLabel statusbar;
-    public static boolean AmandoIsAPoopiehead = true;
 
 //was all private in the minesweeper example changed to public for MinesAdapter class
 
