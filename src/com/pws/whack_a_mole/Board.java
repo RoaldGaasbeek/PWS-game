@@ -1,9 +1,8 @@
 package com.pws.whack_a_mole;
 
-import com.pws.Button;
-import com.pws.main_menu.Menu_Board;
-
-import java.awt.geom.Rectangle2D;
+//import com.pws.Button;
+//import com.pws.main_menu.Menu_Board;
+//import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.lang.Math;
 import javax.swing.*;
@@ -25,7 +24,7 @@ import static com.zetcode.SmallestInArray.getSmallest;
 public class Board extends JPanel {
     protected static final int BOARD_WIDTH = 600;
     protected static final int BOARD_HEIGHT = 400;
-    private final int TARGET_WIDTH = 24;
+//    private final int TARGET_WIDTH = 24;
     private final int FPS = 60;
     private final int PERIOD = 1000 / FPS;
     private final int MAXIMUM_MOLES = 2;
@@ -41,7 +40,7 @@ public class Board extends JPanel {
     private Random rand = new Random();
     public double SECONDS_PASSED;
     public double SECONDS_REMAINING;
-    public double GAME_LENGTH = 60;
+    public double GAME_LENGTH = 10;
     private JButton replayButton;
     private JButton mainMenuButton;
 
@@ -186,15 +185,14 @@ public class Board extends JPanel {
         int randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
         int dx = 1000;
         int dy = 1000;
-        ArrayList<Integer> dxs = new ArrayList<Integer>();
-        ArrayList<Integer> dys = new ArrayList<Integer>();
+        ArrayList<Integer> dxs = new ArrayList<>();
+        ArrayList<Integer> dys = new ArrayList<>();
         while ((((int) Math.sqrt((dx * dx) + (dy * dy))) > (MOLE_WIDTH + MOLE_HEIGHT)) | (randX < 30 && randY < 60)) {
             dxs.clear();
             dys.clear();
             randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
             randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
-            for (int a = 0; a < moles.size(); a++) {
-                Mole mole1 = moles.get(a);
+            for (Mole mole1 : moles) {
                 dxs.add((int) Math.abs((randX - mole1.getX())));
                 dys.add((int) Math.abs((randY - mole1.getY())));
             }
@@ -210,9 +208,7 @@ public class Board extends JPanel {
     }
 
     private void whack(int mx, int my) {
-        for (int i = 0; i < moles.size(); i++) {
-            Mole mole = moles.get(i);
-
+        for (Mole mole : moles) {
             Ellipse2D ellipse = new Ellipse2D.Double(mole.getX(), mole.getY(), MOLE_WIDTH, MOLE_HEIGHT);
 
             if (ellipse.contains(mx, my) && mole.isVisible()) {
@@ -249,8 +245,7 @@ public class Board extends JPanel {
     }
 
     private void showMoles(boolean show) {
-        for (int i = 0; i < moles.size(); i++) {
-            Mole mole = moles.get(i);
+        for (Mole mole : moles) {
             mole.setVisible(show);
         }
     }
