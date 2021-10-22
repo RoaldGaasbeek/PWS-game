@@ -16,11 +16,8 @@ public class memory_board extends JPanel {
     public final int MARK_FOR_CELL = 10;
     public final int EMPTY_CELL = 0;
     public final int MINE_CELL = 12;
-    public final int COVERED_MINE_CELL = MINE_CELL
-            + COVER_FOR_CELL;
-    public final int MARKED_MINE_CELL = COVERED_MINE_CELL
-            + MARK_FOR_CELL;
-    public final int N_MINES = 40;
+    public final int COVERED_MINE_CELL = MINE_CELL + COVER_FOR_CELL;
+    public final int MARKED_MINE_CELL = COVERED_MINE_CELL + MARK_FOR_CELL;
     public final int N_ROWS = 5;
     public final int N_COLS = 4;
     public final int BOARD_WIDTH = N_ROWS * CELL_SIZE + 1;
@@ -31,8 +28,7 @@ public class memory_board extends JPanel {
     public Image[] img;
     public int allCells;
     public final JLabel statusbar;
-
-//was all private in the minesweeper example changed to public for MinesAdapter class
+    boolean isSecondPress = false;
 
     public memory_board(memory_game mGame,JLabel statusbar) {
         this.game = mGame;
@@ -49,7 +45,7 @@ public class memory_board extends JPanel {
             Image realImage = image.getScaledInstance(CELL_SIZE, CELL_SIZE, Image.SCALE_DEFAULT);
             img[i] = realImage;
         }
-        addMouseListener(new MinesAdapter());
+        addMouseListener(new TileAdapter());
         newGame();
         setBackground(Color.orange);
         setLayout(null);
@@ -69,10 +65,10 @@ public class memory_board extends JPanel {
         for (int i = 0; i <allCells; i++) {
             for (int j = 0; j < img.length; j++) {
                 for (int k = 0; k < 2; k++) {
-                    int position = random.nextInt(allCells + 1);
+                    int position = random.nextInt(allCells);
                     if ((position < allCells)
                             && (field[position] < COVER_FOR_CELL)) {
-                        int current_col = position % N_COLS;
+//                        int current_col = position % N_COLS;
                         field[position] = COVER_FOR_CELL + j;
 
                     }
@@ -166,14 +162,15 @@ public class memory_board extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         int uncover = 0;
-        for (int i = 0; i < N_ROWS; i++) {
-            for (int j = 0; j < N_COLS; j++) {
-                int cell = field[(j * N_ROWS) + i];
+        for (int i = 0; i < N_COLS; i++) {
+            for (int j = 0; j < N_ROWS; j++) {
+                int cell = field[(i * N_COLS) + j];
+                int cellValue = cell;
                 if (cell > COVER_FOR_CELL) {
-                    cell = 10;
-                    g.drawImage(img[cell], (j * CELL_SIZE),
-                            (i * CELL_SIZE), this);
+                    cellValue = 10;
                 }
+                g.drawImage(img[cellValue], (j * CELL_SIZE),
+                        (i * CELL_SIZE), this);
             }
         }
         for (int i=0; i< field.length; i++){
@@ -190,13 +187,14 @@ public class memory_board extends JPanel {
         }
     }
 
-    public class MinesAdapter extends MouseAdapter {
+    public class TileAdapter extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
+
             int x = e.getX();
             int y = e.getY();
-            int cCol = x / CELL_SIZE;
-            int cRow = y / CELL_SIZE;
+            int cCol = y / CELL_SIZE;
+            int cRow = x / CELL_SIZE;
             boolean doRepaint = false;
             if (!inGame) {
                 newGame();
@@ -204,45 +202,46 @@ public class memory_board extends JPanel {
             }
             if ((x < N_COLS * CELL_SIZE) && (y < N_ROWS * CELL_SIZE)) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    if (field[(cRow * N_COLS) + cCol] > MINE_CELL) {
-                        doRepaint = true;
-                        Label statusbar = new Label();
-                        if (field[(cRow * N_COLS) + cCol]
-                                <= COVERED_MINE_CELL) {
-                            if (picturesLeft > 0) {
-                                field[(cRow * N_COLS) + cCol]
-                                        += MARK_FOR_CELL;
-                                picturesLeft--;
-                                var msg = Integer.toString(picturesLeft);
-                                statusbar.setText(msg);
-                            } else {
-                                statusbar.setText("No marks left");
-                            }
-                        } else {
-                            field[(cRow * N_COLS) + cCol]
-                                    -= MARK_FOR_CELL;
-                            picturesLeft++;
-                            var msg = Integer.toString(picturesLeft);
-                            statusbar.setText(msg);
-                        }
-                    }
+//                    if (field[(cRow * N_COLS) + cCol] > MINE_CELL) {
+//                        doRepaint = true;
+//                        Label statusbar = new Label();
+//                        if (field[(cRow * N_COLS) + cCol]
+//                                <= COVERED_MINE_CELL) {
+//                            if (picturesLeft > 0) {
+//                                field[(cRow * N_COLS) + cCol]
+//                                        += MARK_FOR_CELL;
+//                                picturesLeft--;
+//                                var msg = Integer.toString(picturesLeft);
+//                                statusbar.setText(msg);
+//                            } else {
+//                                statusbar.setText("No marks left");
+//                            }
+//                        } else {
+//                            field[(cRow * N_COLS) + cCol]
+//                                    -= MARK_FOR_CELL;
+//                            picturesLeft++;
+//                            var msg = Integer.toString(picturesLeft);
+//                            statusbar.setText(msg);
+//                        }
+//                    }
                 } else {
-                    if (field[(cRow * N_COLS) + cCol]
-                            > COVERED_MINE_CELL) {
-                        return;
-                    }
-                    if ((field[(cRow * N_COLS) + cCol] > MINE_CELL)
-                            && (field[(cRow * N_COLS) + cCol]
-                            < MARKED_MINE_CELL)) {
-                        field[(cRow * N_COLS) + cCol]
+//                    if (field[(cRow * N_COLS) + cCol]
+//                            > COVERED_MINE_CELL) {
+//                        return;
+//                    }
+                    if ((field[(cCol * N_COLS) + cRow] >= COVER_FOR_CELL)) {
+                        field[(cCol * N_COLS) + cRow]
                                 -= COVER_FOR_CELL;
                         doRepaint = true;
+                        if (!isSecondPress){
+
+                        }
                         if (field[(cRow * N_COLS) + cCol] == MINE_CELL) {
                             inGame = false;
                         }
-                        if (field[(cRow * N_COLS) + cCol] == EMPTY_CELL) {
-                            find_empty_cells((cRow * N_COLS) + cCol);
-                        }
+//                        if (field[(cRow * N_COLS) + cCol] == EMPTY_CELL) {
+//                            find_empty_cells((cRow * N_COLS) + cCol);
+//                        }
                     }
                 }
                 if (doRepaint) {

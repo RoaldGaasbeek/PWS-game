@@ -165,7 +165,7 @@ public class Board extends JPanel {
                     repaint();
                 }
             } else {
-                if (mole.lifespan > 125) {
+                if (mole.lifespan > 120) {
                     if (moles_on_screen <= MAXIMUM_MOLES) {
                         mole.setVisible(true);
                         mole.lifespan = 0;
