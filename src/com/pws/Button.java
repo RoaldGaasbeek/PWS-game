@@ -1,4 +1,5 @@
 package com.pws;
+//Jip is a poopiehead
 
 import com.pws.Sprite;
 import java.awt.*;
