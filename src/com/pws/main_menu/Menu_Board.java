@@ -46,12 +46,13 @@ public class Menu_Board extends JPanel {
             Game game = new Game();
             game.setVisible(true);
         });
+
         JButton memoryButton = new JButton("play Memory");
         memoryButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
         memoryButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  BUTTON_HEIGHT);
         memoryButton.addActionListener(e -> {
-            memory_game game = new memory_game();
-            game.setVisible(true);
+            memory_game memoryGame = new memory_game();
+            memoryGame.setVisible(true);
         });
 
         add(memoryButton);
