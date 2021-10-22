@@ -1,4 +1,5 @@
 package com.pws.memory;
+//Jip is a poopiehead
 
 
 import java.awt.*;
@@ -160,6 +161,7 @@ public class memory_board extends JPanel {
             }
         }
     }
+//Jip is a poopiehead
 
     @Override
     public void paintComponent(Graphics g) {
