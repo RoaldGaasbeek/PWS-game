@@ -27,7 +27,7 @@ public class Board extends JPanel {
 //    private final int TARGET_WIDTH = 24;
     private final int FPS = 60;
     private final int PERIOD = 1000 / FPS;
-    private final int MAXIMUM_MOLES = 2;
+    private final int MAXIMUM_MOLES = 3;
     private final Game game;
     public int moles_on_screen = 9;
     private int molesWhacked = 0;
@@ -40,7 +40,7 @@ public class Board extends JPanel {
     private Random rand = new Random();
     public double SECONDS_PASSED;
     public double SECONDS_REMAINING;
-    public double GAME_LENGTH = 10;
+    public double GAME_LENGTH = 60;
     private JButton replayButton;
     private JButton mainMenuButton;
 
@@ -106,7 +106,7 @@ public class Board extends JPanel {
             for (int column = 1; column <= 3; column++) {
                 Mole mole = moles.get(index);
                 mole.setXY(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20);
-                mole.lifespan = rand.nextInt( 251);
+                mole.lifespan = rand.nextInt( 101);
                 index++;
             }
         }
@@ -159,7 +159,7 @@ public class Board extends JPanel {
 
             if (mole.isVisible()) {
 
-                if (mole.lifespan > 120) {
+                if (mole.lifespan > 40) {
                     mole.setVisible(false);
                     mole.setXY(giveCoordinates("x"), giveCoordinates("y"));
                     mole.lifespan = 0;
@@ -167,14 +167,16 @@ public class Board extends JPanel {
                     repaint();
                 }
             } else {
-                if (mole.lifespan > 250) {
+                if (mole.lifespan > 125) {
                     if (moles_on_screen <= MAXIMUM_MOLES) {
                         mole.setVisible(true);
                         mole.lifespan = 0;
                         moles_on_screen++;
                         repaint();
+                    }else {
+                        mole.lifespan = rand.nextInt(101);
                     }
-                    mole.lifespan = 0;
+
                 }
             }
         }

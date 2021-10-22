@@ -15,7 +15,7 @@ public class memory_game extends JFrame {
         add(new memory_board(statusbar));
         setResizable(false);
         pack();
-        setTitle("Minesweeper");
+        setTitle("Memory");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
