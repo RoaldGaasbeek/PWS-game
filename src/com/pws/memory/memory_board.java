@@ -34,6 +34,7 @@ public class memory_board extends JPanel {
     public Image[] img;
     public int allCells;
     public final JLabel statusbar;
+    public static boolean AmandoIsAPoopiehead = true;
 
 //was all private in the minesweeper example changed to public for MinesAdapter class
 
@@ -46,7 +47,7 @@ public class memory_board extends JPanel {
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         img = new Image[NUM_IMAGES];
         for (int i = 0; i < NUM_IMAGES; i++) {
-            var path = "src/resources/" + i + ".png";
+            var path = "src/resources/shapes" + i + ".png";
             img[i] = (new ImageIcon(path)).getImage();
         }
         addMouseListener(new MinesAdapter());
@@ -66,7 +67,7 @@ public class memory_board extends JPanel {
         statusbar.setText(Integer.toString(minesLeft));
         int i = 0;
         while (i < allCells) {
-            for (int j = 0; j < 9; j++) {
+            for (int j = 0; j < img.length; j++) {
                 for (int k = 0; k < 2; k++) {
                     int position = random.nextInt(allCells + 1);
                     if ((position < allCells)
