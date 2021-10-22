@@ -11,11 +11,11 @@ public class memory_game extends JFrame {
         initUI();
     }
     private void initUI() {
-        memory_board mBoard = new memory_board(this, statusbar);
+        memory_board mBoard = new memory_board(this); //, statusbar
         add(mBoard);
 
 
-        add(statusbar , BorderLayout.SOUTH);
+//        add(statusbar , BorderLayout.SOUTH);
         setResizable(false);
         pack();
         setTitle("Memory");

@@ -34,13 +34,13 @@ public class memory_board extends JPanel {
     public int minesLeft;
     public Image[] img;
     public int allCells;
-    public final JLabel statusbar;
+//    public final JLabel statusbar;
 
 //was all private in the minesweeper example changed to public for MinesAdapter class
 
-    public memory_board(memory_game mGame, JLabel statusbar) {
+    public memory_board(memory_game mGame) { //, JLabel statusbar
         this.game = mGame;
-        this.statusbar = statusbar;
+//        this.statusbar = statusbar;
         initBoard();
     }
 
@@ -67,21 +67,21 @@ public class memory_board extends JPanel {
         for (int i = 0; i < allCells; i++) {
             field[i] = COVER_FOR_CELL;
         }
-       statusbar.setText(Integer.toString(minesLeft));
-        int i = 0;
-        while (i < allCells) {
-            for (int j = 0; j < img.length; j++) {
-                for (int k = 0; k < 2; k++) {
-                    int position = random.nextInt(allCells + 1);
-                    if ((position < allCells)
-                            && (field[position] < COVER_FOR_CELL)) {
-                        int current_col = position % N_COLS;
-                        field[position] = COVER_FOR_CELL + j;
-                        i++;
-                    }
-                }
-            }
-        }
+//       statusbar.setText(Integer.toString(minesLeft));
+//        int i = 0;
+//        while (i < allCells) {
+//            for (int j = 0; j < img.length; j++) {
+//                for (int k = 0; k < 2; k++) {
+//                    int position = random.nextInt(allCells + 1);
+//                    if ((position < allCells)
+//                            && (field[position] < COVER_FOR_CELL)) {
+//                        int current_col = position % N_COLS;
+//                        field[position] = COVER_FOR_CELL + j;
+//                        i++;
+//                    }
+//                }
+//            }
+//        }
     }
 
     public void find_empty_cells(int j) {
@@ -181,9 +181,9 @@ public class memory_board extends JPanel {
         }
         if (uncover == 0 && !inGame) {
             inGame = false;
-            statusbar.setText("Game won");
+//            statusbar.setText("Game won");
         } else if (!inGame) {
-            statusbar.setText("Game lost");
+//            statusbar.setText("Game lost");
         }
     }
 
