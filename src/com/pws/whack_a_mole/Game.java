@@ -21,7 +21,7 @@ public class Game extends JFrame {
 
         pack();
 
-        setTitle("Whack-a-mole");
+        setTitle("Guac-a-mole");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
