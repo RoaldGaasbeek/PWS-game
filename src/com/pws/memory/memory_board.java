@@ -20,10 +20,6 @@ public class memory_board extends JPanel {
             + COVER_FOR_CELL;
     public final int MARKED_MINE_CELL = COVERED_MINE_CELL
             + MARK_FOR_CELL;
-    public final int DRAW_MINE = 9;
-    public final int DRAW_COVER = 11;
-    public final int DRAW_MARK = 12;
-    public final int DRAW_WRONG_MARK = 13;
     public final int N_MINES = 40;
     public final int N_ROWS = 5;
     public final int N_COLS = 4;
@@ -31,7 +27,7 @@ public class memory_board extends JPanel {
     public final int BOARD_HEIGHT = N_COLS * CELL_SIZE + 1;
     public int[] field;
     public boolean inGame;
-    public int minesLeft;
+    public int picturesLeft;
     public Image[] img;
     public int allCells;
     public final JLabel statusbar;
@@ -49,11 +45,13 @@ public class memory_board extends JPanel {
         img = new Image[NUM_IMAGES];
         for (int i = 0; i < NUM_IMAGES; i++) {
             String path = "src/resources/shapes/" + i + ".png";
-            img[i] = (new ImageIcon(path)).getImage();
+            Image image = (new ImageIcon(path)).getImage();
+            Image realImage = image.getScaledInstance(CELL_SIZE, CELL_SIZE, Image.SCALE_DEFAULT);
+            img[i] = realImage;
         }
         addMouseListener(new MinesAdapter());
         newGame();
-        setBackground(Color.gray);
+        setBackground(Color.orange);
         setLayout(null);
     }
 
@@ -61,15 +59,14 @@ public class memory_board extends JPanel {
         int cell;
         var random = new Random();
         inGame = true;
-        minesLeft = N_MINES;
+        picturesLeft = NUM_IMAGES-1;
         allCells = N_ROWS * N_COLS;
         field = new int[allCells];
-        for (int i = 0; i < allCells; i++) {
-            field[i] = COVER_FOR_CELL;
-        }
-       statusbar.setText(Integer.toString(minesLeft));
-        int i = 0;
-        while (i < (NUM_IMAGES-1)) {
+//        for (int i = 0; i < allCells; i++) {
+//            field[i] = COVER_FOR_CELL;
+//        }
+       statusbar.setText(Integer.toString(picturesLeft));
+        for (int i = 0; i <allCells; i++) {
             for (int j = 0; j < img.length; j++) {
                 for (int k = 0; k < 2; k++) {
                     int position = random.nextInt(allCells + 1);
@@ -80,7 +77,6 @@ public class memory_board extends JPanel {
 
                     }
                 }
-                i++;
             }
         }
     }
@@ -172,7 +168,7 @@ public class memory_board extends JPanel {
         int uncover = 0;
         for (int i = 0; i < N_ROWS; i++) {
             for (int j = 0; j < N_COLS; j++) {
-                int cell = field[(i * N_COLS) + j];
+                int cell = field[(j * N_ROWS) + i];
                 if (cell > COVER_FOR_CELL) {
                     cell = 10;
                     g.drawImage(img[cell], (j * CELL_SIZE),
@@ -180,7 +176,13 @@ public class memory_board extends JPanel {
                 }
             }
         }
-        if (uncover == 0 && !inGame) {
+        for (int i=0; i< field.length; i++){
+            int cell = field [i];
+            if (cell > COVER_FOR_CELL){
+                uncover ++;
+            }
+        }
+        if (uncover == 0 && inGame) {
             inGame = false;
             statusbar.setText("Game won");
         } else if (!inGame) {
@@ -207,11 +209,11 @@ public class memory_board extends JPanel {
                         Label statusbar = new Label();
                         if (field[(cRow * N_COLS) + cCol]
                                 <= COVERED_MINE_CELL) {
-                            if (minesLeft > 0) {
+                            if (picturesLeft > 0) {
                                 field[(cRow * N_COLS) + cCol]
                                         += MARK_FOR_CELL;
-                                minesLeft--;
-                                var msg = Integer.toString(minesLeft);
+                                picturesLeft--;
+                                var msg = Integer.toString(picturesLeft);
                                 statusbar.setText(msg);
                             } else {
                                 statusbar.setText("No marks left");
@@ -219,8 +221,8 @@ public class memory_board extends JPanel {
                         } else {
                             field[(cRow * N_COLS) + cCol]
                                     -= MARK_FOR_CELL;
-                            minesLeft++;
-                            var msg = Integer.toString(minesLeft);
+                            picturesLeft++;
+                            var msg = Integer.toString(picturesLeft);
                             statusbar.setText(msg);
                         }
                     }
@@ -252,9 +254,6 @@ public class memory_board extends JPanel {
 
 
         private void find_empty_cells(int i) {
-        }
-
-        private void repaint() {
         }
 
     }
