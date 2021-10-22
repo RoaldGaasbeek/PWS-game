@@ -1,5 +1,5 @@
 package com.pws;
-//Jip is a poopiehead
+
 
 import java.awt.Image;
 import javax.swing.ImageIcon;

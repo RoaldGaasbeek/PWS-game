@@ -1,5 +1,5 @@
 package com.pws.main_menu;
-//Jip is a poopiehead
+
 
 import javax.swing.*;
 import java.awt.*;
