@@ -5,14 +5,17 @@ import javax.swing.*;
 import java.awt.*;
 
 public class memory_game extends JFrame {
-    private JLabel statusbar;
+    private final JLabel statusbar= new JLabel("");
     public memory_game() {
+
         initUI();
     }
     private void initUI() {
-        statusbar = new JLabel("");
+        memory_board mBoard = new memory_board(this, statusbar);
+        add(mBoard);
+
+
         add(statusbar , BorderLayout.SOUTH);
-        add(new memory_board(statusbar));
         setResizable(false);
         pack();
         setTitle("Memory");

@@ -9,7 +9,8 @@ import javax.swing.*;
 
 
 public class memory_board extends JPanel {
-    public final int NUM_IMAGES = 20;
+    public final memory_game game;
+    public final int NUM_IMAGES = 11;
     public final int CELL_SIZE = 40;
     public final int COVER_FOR_CELL = 10;
     public final int MARK_FOR_CELL = 10;
@@ -37,7 +38,8 @@ public class memory_board extends JPanel {
 
 //was all private in the minesweeper example changed to public for MinesAdapter class
 
-    public memory_board(JLabel statusbar) {
+    public memory_board(memory_game mGame, JLabel statusbar) {
+        this.game = mGame;
         this.statusbar = statusbar;
         initBoard();
     }
@@ -46,11 +48,13 @@ public class memory_board extends JPanel {
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         img = new Image[NUM_IMAGES];
         for (int i = 0; i < NUM_IMAGES; i++) {
-            var path = "src/resources/shapes/"+ i + ".png";
+            String path = "src/resources/shapes/" + i + ".png";
             img[i] = (new ImageIcon(path)).getImage();
         }
         addMouseListener(new MinesAdapter());
         newGame();
+        setBackground(Color.gray);
+        setLayout(null);
     }
 
     public void newGame() {
@@ -63,7 +67,7 @@ public class memory_board extends JPanel {
         for (int i = 0; i < allCells; i++) {
             field[i] = COVER_FOR_CELL;
         }
-        statusbar.setText(Integer.toString(minesLeft));
+       statusbar.setText(Integer.toString(minesLeft));
         int i = 0;
         while (i < allCells) {
             for (int j = 0; j < img.length; j++) {
@@ -168,11 +172,14 @@ public class memory_board extends JPanel {
         for (int i = 0; i < N_ROWS; i++) {
             for (int j = 0; j < N_COLS; j++) {
                 int cell = field[(i * N_COLS) + j];
-                g.drawImage(img[cell], (j * CELL_SIZE),
-                        (i * CELL_SIZE), this);
+                if (cell > COVER_FOR_CELL) {
+                    cell = 10;
+                    g.drawImage(img[cell], (j * CELL_SIZE),
+                            (i * CELL_SIZE), this);
+                }
             }
         }
-        if (uncover == 0 && inGame) {
+        if (uncover == 0 && !inGame) {
             inGame = false;
             statusbar.setText("Game won");
         } else if (!inGame) {
