@@ -10,7 +10,7 @@ import javax.swing.*;
 
 public class memory_board extends JPanel {
     public final int NUM_IMAGES = 13;
-    public final int CELL_SIZE = 15;
+    public final int CELL_SIZE = 40;
     public final int COVER_FOR_CELL = 10;
     public final int MARK_FOR_CELL = 10;
     public final int EMPTY_CELL = 0;
