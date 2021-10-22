@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -121,10 +122,8 @@ public class Board extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        Graphics2D g2d = (Graphics2D) g;
+//        Graphics2D g2d = (Graphics2D) g;
 
-        // For now we only have one mole.
-        //Mole mole = moles.get(0);
 
 
         if (isRunning) {
@@ -153,8 +152,7 @@ public class Board extends JPanel {
             isRunning = false;
             setCursor(Cursor.getDefaultCursor());
         }
-        for (int i = 0; i < moles.size(); i++) {
-            Mole mole = moles.get(i);
+        for (Mole mole : moles) {
             mole.lifespan++;
 
             if (mole.isVisible()) {
@@ -202,7 +200,7 @@ public class Board extends JPanel {
             dy = (getSmallest(dys, 9));
         }
 
-        if (xory == "x") {
+        if (Objects.equals(xory, "x")) {
             return (randX);
         } else {
             return (randY);
@@ -232,16 +230,24 @@ public class Board extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         String msg = "Game Over";
-        String msg2 = String.format("Moles hit: %d", molesWhacked);
+        String msg2 = String.format("Moles whacked: %d", molesWhacked);
+
+        double molesWhackedPerSecond = molesWhacked / GAME_LENGTH;
+        String roundedWhacksPerSecond = String.format("%.2f", molesWhackedPerSecond);
+        String msg3 = ("Moles per second: " + roundedWhacksPerSecond);
+
         Font myFont = new Font("Geneva", Font.BOLD, 24);
         FontMetrics fontMetrics = this.getFontMetrics(myFont);
         g.setFont(myFont);
         g.drawString(msg,
                 (BOARD_WIDTH - fontMetrics.stringWidth(msg)) / 2,
                 (BOARD_HEIGHT / 2) - fontMetrics.getHeight());
-        g.drawString(msg2, (BOARD_WIDTH -
-                        fontMetrics.stringWidth(msg2)) / 2,
+        g.drawString(msg2,
+                (BOARD_WIDTH - fontMetrics.stringWidth(msg2)) / 2,
                 (BOARD_HEIGHT / 2) + fontMetrics.getHeight());
+        g.drawString(msg3,
+                (BOARD_WIDTH - fontMetrics.stringWidth(msg2)) / 2,
+                (BOARD_HEIGHT / 2) + 2*fontMetrics.getHeight());
         mainMenuButton.setVisible(true);
         replayButton.setVisible(true);
     }
