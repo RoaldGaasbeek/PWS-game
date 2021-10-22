@@ -20,7 +20,7 @@ public class memory_game extends JFrame {
     }
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
-            var game = new memory_game();
+            memory_game game = new memory_game();
             game.setVisible(true);
         });
     }

@@ -1,4 +1,6 @@
 package com.pws;
+
+import com.pws.Sprite;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +30,13 @@ public class Button extends Sprite {
             if (i == 0) {
 //            buttons.add(new Button(BOARD_WIDTH - BUTTON_WIDTH, BOARD_HEIGHT - BUTTON_HEIGHT, "whac-a-mole"));
 //            buttons.add(new Button(BOARD_WIDTH - BUTTON_WIDTH, BOARD_HEIGHT - (2 * BUTTON_HEIGHT), "memory"));
-                buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text1));
+                buttons.add(new Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text1));
                 indexNumbers.add(currentSize);
             } else if (i == 1) {
-                buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text2));
+                buttons.add(new Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text2));
                 indexNumbers.add(currentSize+1);
             } else if (i == 2) {
-                buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text3));
+                buttons.add(new Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), text3));
                 indexNumbers.add(currentSize+2);
             } else {
                 buttons.add(new com.pws.Button(boardWidth - BUTTON_WIDTH, boardHeight - ((i + 1) * BUTTON_HEIGHT), "..."));
@@ -46,7 +48,7 @@ public class Button extends Sprite {
 
     public static void drawButtonText(List<Integer> buttonlist, Graphics2D g2d) {
         for (int i = buttonlist.get(0); i < buttonlist.get(buttonlist.size()-1); i++) {
-            Button button = buttons.get(i);
+            Button button = com.pws.Button.buttons.get(i);
             g2d.setFont(new Font("Geneva", Font.BOLD, 12));
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);

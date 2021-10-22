@@ -3,7 +3,7 @@ package com.pws.main_menu;
 import com.pws.Button;
 import com.pws.whack_a_mole.Game;
 import com.pws.whack_a_mole.HitEffect;
-
+import com.pws.memory.memory_game;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -49,7 +49,8 @@ public class Menu_Board extends JPanel {
         memoryButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
         memoryButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  BUTTON_HEIGHT);
         memoryButton.addActionListener(e -> {
-
+            memory_game game = new memory_game();
+            game.setVisible(true);
         });
 
         add(memoryButton);
