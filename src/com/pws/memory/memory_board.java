@@ -23,14 +23,13 @@ public class memory_board extends JPanel {
     public final int N_COLS = 4;
     public final int BOARD_WIDTH = N_ROWS * CELL_SIZE + 1;
     public final int BOARD_HEIGHT = N_COLS * CELL_SIZE + 1;
-    public int[] field;
+    public ArrayList<Integer> field = new ArrayList<>();
     public boolean inGame;
     public int picturesLeft;
     public Image[] img;
     public int allCells;
     public final JLabel statusbar;
     boolean isSecondPress = false;
-    public ArrayList<Integer> fieldsLeft = new ArrayList<Integer>();
     public memory_board(memory_game mGame,JLabel statusbar) {
         this.game = mGame;
         this.statusbar = statusbar;
@@ -58,22 +57,26 @@ public class memory_board extends JPanel {
         inGame = true;
         picturesLeft = NUM_IMAGES-1;
         allCells = N_ROWS * N_COLS;
-        field = new int[allCells];
-
         for (int i = 0; i < allCells; i++) {
-            fieldsLeft.add(i);
+            field.add(i);
         }
+
+        int i = allCells ;
+        int l;
        statusbar.setText(Integer.toString(picturesLeft));
             for (int j = 0; j < NUM_IMAGES; j++) {
                 for (int k = 0; k < 2; k++) {
-                    int l = random.nextInt(fieldsLeft.size());
-
-                    int position = fieldsLeft.get(l);
-                            field[position] = COVER_FOR_CELL + j;
-                            fieldsLeft.remove(position);
-                        }
+                    if (i >= 1) {
+                        l = random.nextInt(i);
+                    } else{
+                        l = 0;
                     }
+                    int position = field.get(l);
+                    field.set(position, COVER_FOR_CELL + j);
+                    i --;
                 }
+            }
+    }
 
 
 
@@ -165,7 +168,7 @@ public class memory_board extends JPanel {
         int uncover = 0;
         for (int i = 0; i < N_COLS; i++) {
             for (int j = 0; j < N_ROWS; j++) {
-                int cell = field[(i * N_COLS) + j];
+                int cell = field.get((i * N_COLS) + j);
                 int cellValue = cell;
                 if (cell > COVER_FOR_CELL) {
                     cellValue = 10;
@@ -174,8 +177,8 @@ public class memory_board extends JPanel {
                         (i * CELL_SIZE), this);
             }
         }
-        for (int i=0; i< field.length; i++){
-            int cell = field [i];
+        for (int i=0; i< field.size(); i++){
+            int cell = field.get (i);
             if (cell > COVER_FOR_CELL){
                 uncover ++;
             }
@@ -206,8 +209,8 @@ public class memory_board extends JPanel {
 //                            > COVERED_MINE_CELL) {
 //                        return;
 //                    }
-                    if ((field[(cCol * N_COLS) + cRow] >= COVER_FOR_CELL)) {
-                        field[(cCol * N_COLS) + cRow] -= COVER_FOR_CELL;
+                    if ((field.get ((cCol * N_COLS) + cRow) >= COVER_FOR_CELL)) {
+                        field.set ((cCol * N_COLS) + cRow, (field.get ((cCol * N_COLS) + cRow))- COVER_FOR_CELL);
                         doRepaint = true;
                         if (!isSecondPress){
 
