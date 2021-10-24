@@ -1,4 +1,4 @@
-package com.ad.memory_two;
+package com.pws.memory_two;
 
 import javax.swing.*;
 import java.awt.*;
