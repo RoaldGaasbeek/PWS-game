@@ -11,6 +11,9 @@ import java.util.List;
 
 public class Board extends JPanel {
 
+    private final static int HGAP = 10;
+    private final static int VGAP = 10;
+    private final static int VMARGIN = 80;
     private List<Tile> tiles = new ArrayList<>();
 
     private boolean isRunning = true;
@@ -22,8 +25,14 @@ public class Board extends JPanel {
     private Map<Integer, Integer> tilesNumberToColumns = new HashMap<>();
     private int numberOfTilesFound = 0;
 
+    private final Random random = new Random();
+
     public Board() {
-        setLayout(new GridLayout(2, 4));
+        GridLayout layout = new GridLayout(2, 4);
+        //FlowLayout layout = new FlowLayout();
+        layout.setHgap(10);
+        layout.setVgap(10);
+        setLayout(layout);
 
         tilesNumberToColumns.put(8, 4);
         tilesNumberToColumns.put(16, 4);
@@ -51,10 +60,13 @@ public class Board extends JPanel {
         menu.getAccessibleContext().setAccessibleDescription("The game menu.");
         menuBar.add(menu);
 
-        JMenu subMenu = createSubmenu(MemorySet.POKEMON, 36);
+        JMenu subMenu = createSubmenu(MemorySet.POKEMON);
         menu.add(subMenu);
 
-        subMenu = createSubmenu(MemorySet.NATURE, 16);
+        subMenu = createSubmenu(MemorySet.NATURE);
+        menu.add(subMenu);
+
+        subMenu = createSubmenu(MemorySet.POKEMON_GEN1);
         menu.add(subMenu);
 
 
@@ -62,17 +74,17 @@ public class Board extends JPanel {
         topFrame.setJMenuBar(menuBar);
     }
 
-    private JMenu createSubmenu(MemorySet memorySet, int maxTiles) {
+    private JMenu createSubmenu(MemorySet memorySet) {
         JMenu submenu = new JMenu(memorySet.name().toLowerCase());
         submenu.setActionCommand(memorySet.name());
 
-        createTilesSizeSelectionMenu(submenu, maxTiles);
+        createTilesSizeSelectionMenu(submenu, memorySet);
 
         return submenu;
     }
 
 
-    private void createTilesSizeSelectionMenu(JMenu menu, int maxTiles) {
+    private void createTilesSizeSelectionMenu(JMenu menu, MemorySet memorySet) {
         ActionListener tilesActionListener = createNumberOfTilesActionListener();
 
         JMenuItem rbMenuItem;
@@ -83,7 +95,7 @@ public class Board extends JPanel {
         rbMenuItem.addActionListener(tilesActionListener);
         menu.add(rbMenuItem);
 
-        if (16 > maxTiles) {
+        if (8 > memorySet.getNumberOfTiles()) {
             return;
         }
         rbMenuItem = new JMenuItem("4x4");
@@ -91,7 +103,7 @@ public class Board extends JPanel {
         rbMenuItem.addActionListener(tilesActionListener);
         menu.add(rbMenuItem);
 
-        if (24 > maxTiles) {
+        if (12 > memorySet.getNumberOfTiles()) {
             return;
         }
         rbMenuItem = new JMenuItem("6x4");
@@ -99,7 +111,7 @@ public class Board extends JPanel {
         rbMenuItem.addActionListener(tilesActionListener);
         menu.add(rbMenuItem);
 
-        if (30 > maxTiles) {
+        if (15 > memorySet.getNumberOfTiles()) {
             return;
         }
         rbMenuItem = new JMenuItem("6x5");
@@ -107,7 +119,7 @@ public class Board extends JPanel {
         rbMenuItem.addActionListener(tilesActionListener);
         menu.add(rbMenuItem);
 
-        if (36 > maxTiles) {
+        if (18 > memorySet.getNumberOfTiles()) {
             return;
         }
         rbMenuItem = new JMenuItem("6x6");
@@ -142,16 +154,10 @@ public class Board extends JPanel {
         removeAll();
         numberOfTilesFound = 0;
 
-        List<Tile> myTiles = new ArrayList(numberOfTiles);
-
-        if (MemorySet.POKEMON.equals(memorySet)) {
-            addTiles(myTiles, ".jpg");
-        } else if (MemorySet.NATURE.equals(memorySet)) {
-            addTiles(myTiles, ".png");
-        }
+        List<Tile> myTiles = new ArrayList<>(numberOfTiles);
+        addTiles(myTiles, memorySet.getFileExtension());
 
         int index;
-        Random random = new Random();
 
         while (!myTiles.isEmpty()) {
             index = random.nextInt(myTiles.size());
@@ -164,26 +170,20 @@ public class Board extends JPanel {
 
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
 
-        if (MemorySet.POKEMON.equals(memorySet)) {
-            topFrame.setSize((8 + 105) * columns, (38 + 90) * rows);
-        } else if (MemorySet.NATURE.equals(memorySet)) {
-            topFrame.setSize((8 + 200) * columns, (38 + 210) * rows);
-        }
+        topFrame.setSize((HGAP + memorySet.getWidth()) * columns, (VGAP + memorySet.getHeight()) * rows + VMARGIN);
 
         GridLayout layout = (GridLayout) getLayout();
         layout.setColumns(columns);
         layout.setRows(rows);
-
-        revalidate();
     }
 
     private void addTiles(List<Tile> myTiles, String fileType) {
         String setName = memorySet.name().toLowerCase();
-        String path = "src/resources/memory/memory-" + setName + "/";
+        String path = "src/resources/memory/" + setName + "/";
         String imageNameBack = path + "back.png";
 
         for (int i = 1; i <= (numberOfTiles / 2); i++) {
-            String imageName = path + setName + "-" + String.valueOf(i) + fileType;
+            String imageName = path + i + fileType;
 
             myTiles.add(createTile(imageName, imageNameBack, i));
             myTiles.add(createTile(imageName, imageNameBack, i));
