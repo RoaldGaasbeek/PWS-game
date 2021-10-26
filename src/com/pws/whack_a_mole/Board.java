@@ -30,7 +30,7 @@ public class Board extends JPanel {
     private final int PERIOD = 1000 / FPS;
     private final int MAXIMUM_MOLES = 3;
     private final Game game;
-    public int moles_on_screen = 9;
+    public int molesOnScreen = 9;
     private int molesWhacked = 0;
     private HitEffect hitEffect;
     private Timer timer;
@@ -44,6 +44,7 @@ public class Board extends JPanel {
     public double GAME_LENGTH = 60;
     private JButton replayButton;
     private JButton mainMenuButton;
+    private int molesMissed = 0;
 
     public Board(Game game) {
         this.game = game;
@@ -87,7 +88,6 @@ public class Board extends JPanel {
     private void createMoles() {
         SECONDS_PASSED = 0;
         SECONDS_REMAINING = GAME_LENGTH;
-//        moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
 
         for (int row = 1; row <= 3; row++) {
             for (int column = 1; column <= 3; column++) {
@@ -157,19 +157,20 @@ public class Board extends JPanel {
 
             if (mole.isVisible()) {
 
-                if (mole.lifespan > 40) {
+                if (mole.lifespan > 60) {
                     mole.setVisible(false);
                     mole.setXY(giveCoordinates("x"), giveCoordinates("y"));
                     mole.lifespan = 0;
-                    moles_on_screen--;
+                    molesOnScreen--;
+                    molesMissed++;
                     repaint();
                 }
             } else {
                 if (mole.lifespan > 120) {
-                    if (moles_on_screen <= MAXIMUM_MOLES) {
+                    if (molesOnScreen <= MAXIMUM_MOLES) {
                         mole.setVisible(true);
                         mole.lifespan = 0;
-                        moles_on_screen++;
+                        molesOnScreen++;
                         repaint();
                     }else {
                         mole.lifespan = rand.nextInt(101);
@@ -213,7 +214,7 @@ public class Board extends JPanel {
 
             if (ellipse.contains(mx, my) && mole.isVisible()) {
                 molesWhacked++;
-                moles_on_screen--;
+                molesOnScreen--;
                 mole.setXY(giveCoordinates("x"), giveCoordinates("y"));
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
                 mole.setVisible(false);
@@ -235,6 +236,7 @@ public class Board extends JPanel {
         double molesWhackedPerSecond = molesWhacked / GAME_LENGTH;
         String roundedWhacksPerSecond = String.format("%.2f", molesWhackedPerSecond);
         String msg3 = ("Moles per second: " + roundedWhacksPerSecond);
+        String msg4 = ("moles missed: " + molesMissed);
 
         Font myFont = new Font("Geneva", Font.BOLD, 24);
         FontMetrics fontMetrics = this.getFontMetrics(myFont);
@@ -248,6 +250,10 @@ public class Board extends JPanel {
         g.drawString(msg3,
                 (BOARD_WIDTH - fontMetrics.stringWidth(msg2)) / 2,
                 (BOARD_HEIGHT / 2) + 2*fontMetrics.getHeight());
+        g.drawString(msg4,
+                (BOARD_WIDTH - fontMetrics.stringWidth(msg2)) / 2,
+                (BOARD_HEIGHT / 2) + 3*fontMetrics.getHeight());
+
         mainMenuButton.setVisible(true);
         replayButton.setVisible(true);
     }
@@ -268,7 +274,7 @@ public class Board extends JPanel {
                     new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
                     new Point(0, 0),
                     null));
-            moles_on_screen = 9;
+            molesOnScreen = 9;
             isRunning = true;
 
             initialiseMoles();
