@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Tile extends JButton {
-    public final static int WIDTH = 190;
-    public final static int HEIGHT = 204;
     private final Board board;
     private final String imageNameBack;
     private boolean isShown = false;
@@ -34,12 +32,11 @@ public class Tile extends JButton {
 
         setIcon(backIcon);
         setSize(backIcon.getIconWidth(), backIcon.getIconHeight());
-        //setPressedIcon(frontIcon);
-        //setRolloverIcon(backIcon);
         setPreferredSize(new Dimension(backIcon.getIconWidth(), backIcon.getIconHeight()));
         setOpaque(false);
         setContentAreaFilled(false);
         setBorderPainted(false);
+        setFocusPainted(false);
 
         addActionListener(new ActionListener() {
             @Override

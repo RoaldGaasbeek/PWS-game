@@ -1,29 +1,37 @@
 package com.pws.memory_two;
 
-import javax.swing.*;
-import javax.swing.Timer;
+import static java.util.stream.Collectors.toList;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
+import java.util.stream.IntStream;
+
+import javax.swing.*;
+import javax.swing.Timer;
 
 public class Board extends JPanel {
 
     private final static int HGAP = 10;
     private final static int VGAP = 10;
     private final static int VMARGIN = 80;
+
     private List<Tile> tiles = new ArrayList<>();
 
-    private boolean isRunning = true;
     private int tilesShown = 0;
     private int timerCounter = 40;
     private boolean matchFound = false;
-    private MemorySet memorySet = MemorySet.POKEMON;
     private int numberOfTiles = 8;
     private Map<Integer, Integer> tilesNumberToColumns = new HashMap<>();
     private int numberOfTilesFound = 0;
+    private int numberOfAttempts = 0;
+    private Instant startTime;
 
     private final Random random = new Random();
 
@@ -68,7 +76,6 @@ public class Board extends JPanel {
 
         subMenu = createSubmenu(MemorySet.POKEMON_GEN1);
         menu.add(subMenu);
-
 
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         topFrame.setJMenuBar(menuBar);
@@ -138,10 +145,11 @@ public class Board extends JPanel {
 
                     JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
                     JMenu parent = (JMenu) popupMenu.getInvoker();
-                    memorySet = MemorySet.valueOf(parent.getActionCommand());
+                    MemorySet memorySet = MemorySet.valueOf(parent.getActionCommand());
 
-                    createTiles();
+                    createTiles(memorySet);
                     revalidate();
+                    initialiseGameStats();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -150,20 +158,12 @@ public class Board extends JPanel {
     }
 
 
-    private void createTiles() {
+    private void createTiles(MemorySet memorySet) {
         removeAll();
-        numberOfTilesFound = 0;
+        tiles.clear();
 
-        List<Tile> myTiles = new ArrayList<>(numberOfTiles);
-        addTiles(myTiles, memorySet.getFileExtension());
-
-        int index;
-
-        while (!myTiles.isEmpty()) {
-            index = random.nextInt(myTiles.size());
-            add(myTiles.get(index));
-            myTiles.remove(index);
-        }
+        List<Tile> selectedTiles = selectTiles(memorySet);
+        placeTiles(selectedTiles);
 
         int columns = tilesNumberToColumns.get(numberOfTiles);
         int rows = numberOfTiles / columns;
@@ -177,32 +177,66 @@ public class Board extends JPanel {
         layout.setRows(rows);
     }
 
-    private void addTiles(List<Tile> myTiles, String fileType) {
+    private List<Tile> selectTiles(MemorySet memorySet) {
+        int tilesSelected = 0;
+        int index;
+        List<Tile> selectedTiles = new ArrayList<>(numberOfTiles);
+        // Get a list of all tile numbers
+        List<Integer> allTiles = IntStream.range(1, memorySet.getNumberOfTiles() + 1).boxed().collect(toList());
+
         String setName = memorySet.name().toLowerCase();
         String path = "src/resources/memory/" + setName + "/";
         String imageNameBack = path + "back.png";
 
-        for (int i = 1; i <= (numberOfTiles / 2); i++) {
-            String imageName = path + i + fileType;
+        // select tiles until we have enough
+        while (tilesSelected < numberOfTiles/2) {
+            // select an index randomly from all possibilities
+            // this way, the starting tiles will be different each time
+            index = random.nextInt(allTiles.size());
+            int id = allTiles.get(index);
+            String imageName = path + id + memorySet.getFileExtension();
 
-            myTiles.add(createTile(imageName, imageNameBack, i));
-            myTiles.add(createTile(imageName, imageNameBack, i));
+            // add the tile twice
+            selectedTiles.add(createTile(imageName, imageNameBack, id));
+            selectedTiles.add(createTile(imageName, imageNameBack, id));
+
+            // remove this tile number from the list, it must not be used again
+            allTiles.remove(index);
+            tilesSelected++;
+        }
+
+        return selectedTiles;
+    }
+
+    private void placeTiles(List<Tile> selectedTiles) {
+        int index;
+        while (!selectedTiles.isEmpty()) {
+            // randomly select the next tile
+            index = random.nextInt(selectedTiles.size());
+            add(selectedTiles.get(index));
+            tiles.add(selectedTiles.get(index));
+            selectedTiles.remove(index);
         }
     }
 
-    private Tile createTile(String imageName, String imageNameBack, int number) {
-        Tile tile = new Tile(imageName, imageNameBack, number, this);
-        tiles.add(tile);
 
-        return tile;
+    private Tile createTile(String imageName, String imageNameBack, int id) {
+        return new Tile(imageName, imageNameBack, id, this);
     }
 
+
+    private void initialiseGameStats() {
+        numberOfTilesFound = 0;
+        numberOfAttempts = 0;
+        startTime = Instant.now();
+    }
 
     public void handleTileClick(Tile tile) {
         if (tilesShown < 2) {
             tile.doShow(true);
 
             if (tilesShown == 1) {
+                numberOfAttempts++;
                 handleMatchingTiles(tile);
             }
 
@@ -227,6 +261,30 @@ public class Board extends JPanel {
         for (Tile tile : tiles) {
             tile.setVisible(true);
         }
+
+        // calculate results
+        Instant endTime = Instant.now();
+        Duration duration = Duration.between(startTime, endTime);
+        long millis = duration.toMillis();
+        long secsWithWaitingTime = (millis + 500) / 1000;
+        long secsNetto = secsWithWaitingTime - numberOfAttempts * 2;
+
+        long minutes = duration.toMinutes();
+        long seconds = secsWithWaitingTime - minutes*60;
+        String timeString = String.format("%02d:%02d", minutes, seconds);
+
+        Duration waitDuration = Duration.of(numberOfAttempts * 2, ChronoUnit.SECONDS);
+        minutes = waitDuration.toMinutes();
+        seconds = numberOfAttempts * 2 - minutes*60;
+        String timeStringWaiting = String.format("%02d:%02d", minutes, seconds);
+
+        // show the results
+        JOptionPane.showMessageDialog(
+                SwingUtilities.getWindowAncestor(this),
+                "You needed " + numberOfAttempts + " turns to complete the game.\n" +
+                "It took you " + timeString + " of which " +
+                timeStringWaiting + " was waiting time.",
+                "Game finished", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private class TimerActionListener implements ActionListener {

@@ -2,7 +2,7 @@ package com.pws.memory_two;
 
 public enum MemorySet {
     NATURE(".png", 8, 190, 204),
-    POKEMON(".jpg", 24, 190, 204),
+    POKEMON(".jpg", 24, 105, 90),
     POKEMON_GEN1(".png", 41, 128, 128);
 
 
