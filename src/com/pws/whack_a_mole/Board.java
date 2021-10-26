@@ -40,7 +40,7 @@ public class Board extends JPanel {
     private Random rand = new Random();
     private double SECONDS_PASSED;
     private double SECONDS_REMAINING;
-    private double GAME_LENGTH = 10;
+    private double GAME_LENGTH = 60;
     private JButton replayButton;
     private JButton mainMenuButton;
     private int molesMissed = 0;
