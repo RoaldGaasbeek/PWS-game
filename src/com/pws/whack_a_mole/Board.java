@@ -23,30 +23,30 @@ import static com.zetcode.SmallestInArray.getSmallest;
 
 
 public class Board extends JPanel {
-    protected static final int BOARD_WIDTH = 600;
-    protected static final int BOARD_HEIGHT = 400;
-//    private final int TARGET_WIDTH = 24;
+    private static final int BOARD_WIDTH = 600;
+    private static final int BOARD_HEIGHT = 400;
     private final int FPS = 60;
     private final int PERIOD = 1000 / FPS;
     private final int MAXIMUM_MOLES = 3;
     private final Game game;
-    public int molesOnScreen = 9;
+    private int molesOnScreen = 9;
     private int molesWhacked = 0;
     private HitEffect hitEffect;
     private Timer timer;
     private Timer inGameTimer;
     private boolean isRunning = true;
     private List<Mole> moles = new ArrayList<>();
-    private List<com.pws.Button> buttons = new ArrayList<>();
+//    private List<com.pws.Button> buttons = new ArrayList<>();
     private Random rand = new Random();
-    public double SECONDS_PASSED;
-    public double SECONDS_REMAINING;
-    public double GAME_LENGTH = 60;
+    private double SECONDS_PASSED;
+    private double SECONDS_REMAINING;
+    private double GAME_LENGTH = 10;
     private JButton replayButton;
     private JButton mainMenuButton;
     private int molesMissed = 0;
+    private List<Double> lifespans = new ArrayList<>();
 
-    public Board(Game game) {
+    Board(Game game) {
         this.game = game;
         initBoard();
     }
@@ -79,7 +79,7 @@ public class Board extends JPanel {
 
         add(replayButton);
         add(mainMenuButton);
-        inGameTimer = new Timer (100, new inGameTimer());
+        inGameTimer = new Timer (100, new InGameTimer());
         timer = new Timer(PERIOD, new GameCycle());
         timer.start();
         inGameTimer.start();
@@ -214,6 +214,7 @@ public class Board extends JPanel {
 
             if (ellipse.contains(mx, my) && mole.isVisible()) {
                 molesWhacked++;
+                lifespans.add((double) mole.lifespan);
                 molesOnScreen--;
                 mole.setXY(giveCoordinates("x"), giveCoordinates("y"));
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
@@ -238,24 +239,33 @@ public class Board extends JPanel {
         String msg3 = ("Moles per second: " + roundedWhacksPerSecond);
         String msg4 = ("moles missed: " + molesMissed);
 
+        double totalLifespans = 0;
+        for (Double d : lifespans) {
+            totalLifespans += d;
+        }
+
+        double averageLifespan = totalLifespans/molesWhacked;
+        averageLifespan = averageLifespan * 16 / 1000;
+        String roundedAverageLifespan = String.format("%.2f", averageLifespan);
+        String msg5 = ("average reaction speed: " + roundedAverageLifespan );
+
         Font myFont = new Font("Geneva", Font.BOLD, 24);
         FontMetrics fontMetrics = this.getFontMetrics(myFont);
         g.setFont(myFont);
-        g.drawString(msg,
-                (BOARD_WIDTH - fontMetrics.stringWidth(msg)) / 2,
-                (BOARD_HEIGHT / 2) - fontMetrics.getHeight());
-        g.drawString(msg2,
-                (BOARD_WIDTH - fontMetrics.stringWidth(msg2)) / 2,
-                (BOARD_HEIGHT / 2) + fontMetrics.getHeight());
-        g.drawString(msg3,
-                (BOARD_WIDTH - fontMetrics.stringWidth(msg2)) / 2,
-                (BOARD_HEIGHT / 2) + 2*fontMetrics.getHeight());
-        g.drawString(msg4,
-                (BOARD_WIDTH - fontMetrics.stringWidth(msg2)) / 2,
-                (BOARD_HEIGHT / 2) + 3*fontMetrics.getHeight());
+        drawMessage(g, msg, fontMetrics,-3);
+        drawMessage(g, msg2, fontMetrics,-1);
+        drawMessage(g, msg3, fontMetrics,0);
+        drawMessage(g, msg4, fontMetrics,1);
+        drawMessage(g, msg5, fontMetrics,2);
 
         mainMenuButton.setVisible(true);
         replayButton.setVisible(true);
+    }
+
+    private void drawMessage(Graphics g, String msg, FontMetrics fontMetrics, int i) {
+        g.drawString(msg,
+                (BOARD_WIDTH - fontMetrics.stringWidth(msg)) / 2,
+                (BOARD_HEIGHT / 2) + i * fontMetrics.getHeight());
     }
 
     private void showMoles(boolean show) {
@@ -332,7 +342,7 @@ public class Board extends JPanel {
         }
     }
 
-    private class inGameTimer implements ActionListener {
+    private class InGameTimer implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             SECONDS_PASSED = SECONDS_PASSED+ 0.1;
