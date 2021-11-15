@@ -1,6 +1,7 @@
 package com.pws.main_menu;
 
-
+import com.pws.bad_guys.BadGuysMain;
+import com.pws.memory_two.MemoryMain;
 import com.pws.Button;
 import com.pws.whack_a_mole.Game;
 import com.pws.whack_a_mole.HitEffect;
@@ -39,6 +40,14 @@ public class Menu_Board extends JPanel {
         setBackground(Color.CYAN);
         setLayout(null);
 
+        JButton badGuysButton = new JButton("play Bad guys");
+        badGuysButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
+        badGuysButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  3* BUTTON_HEIGHT);
+        badGuysButton.addActionListener(e -> {
+            BadGuysMain game = new BadGuysMain();
+            game.setVisible(true);
+        });
+
         JButton whacAMoleButton = new JButton("play Whac-a-Mole");
         whacAMoleButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
         whacAMoleButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH), BOARD_HEIGHT - 2 * BUTTON_HEIGHT);
@@ -51,10 +60,11 @@ public class Menu_Board extends JPanel {
         memoryButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
         memoryButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  BUTTON_HEIGHT);
         memoryButton.addActionListener(e -> {
-            memory_game memoryGame = new memory_game();
-            memoryGame.setVisible(true);
+            MemoryMain memory = new MemoryMain();
+            memory.setVisible(true);
         });
 
+        add(badGuysButton);
         add(memoryButton);
         add(whacAMoleButton);
 

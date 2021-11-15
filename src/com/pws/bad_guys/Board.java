@@ -13,6 +13,7 @@ public class Board extends JPanel {
     private final Random random;
     private final LayoutManager layout;
     private final Container contentPane;
+    private final BadGuysMain main;
     private Guy jumper;
     private JLabel thiefsLabel = new JLabel("Bad guys hit: ");
     private JLabel scoreLabel = new JLabel("0");
@@ -28,7 +29,8 @@ public class Board extends JPanel {
     private JPanel centerPanel = new JPanel();
 
 
-    public Board(LayoutManager layout, Container contentPane) {
+    public Board(LayoutManager layout, Container contentPane, BadGuysMain main) {
+        this.main = main;
         this.layout = layout;
         this.contentPane = contentPane;
 
