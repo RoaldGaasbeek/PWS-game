@@ -14,7 +14,7 @@ public class MemoryMain extends JFrame {
     private void initUI() {
         setLayout(new BorderLayout());
 
-        Board board = new Board();
+        Board board = new Board(this);
         add(CENTER, board);
 
         // initBoard needs to be AFTER the board is added to the frame to resize properly.

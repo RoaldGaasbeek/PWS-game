@@ -17,7 +17,7 @@ public class BadGuysMain extends JFrame {
 
     private void initUI() {
         setLayout(new BorderLayout());
-        Board board = new Board(getLayout(), getContentPane());
+        Board board = new Board(getLayout(), getContentPane(), this);
         board.initBoard();
 //        add(board);
         add(CENTER, board);
