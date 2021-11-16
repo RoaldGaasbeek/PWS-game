@@ -3,6 +3,10 @@ package com.pws.whack_a_mole;
 //import com.pws.Button;
 //import com.pws.main_menu.Menu_Board;
 //import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.lang.Math;
 import javax.swing.*;
@@ -35,6 +39,7 @@ public class Board extends JPanel {
     private Timer timer;
     private Timer inGameTimer;
     private boolean isRunning = true;
+    private boolean isGameOver = false;
     private List<Mole> moles = new ArrayList<>();
 //    private List<com.pws.Button> buttons = new ArrayList<>();
     private Random rand = new Random();
@@ -128,7 +133,7 @@ public class Board extends JPanel {
 
         if (isRunning) {
             doDrawing(g);
-        } else {
+        } else if (!isGameOver) {
             gameOver(g);
         }
 
@@ -224,6 +229,9 @@ public class Board extends JPanel {
     }
 
     private void gameOver(Graphics g) {
+
+        isGameOver = true;
+
         showMoles(false);
 
         Graphics2D g2d = (Graphics2D) g;
@@ -245,9 +253,13 @@ public class Board extends JPanel {
         }
 
         double averageLifespan = totalLifespans/molesWhacked;
-        averageLifespan = averageLifespan * 16 / 1000;
+        averageLifespan = averageLifespan * 16 / 1000;  // 1000/FPS = 16 and divide by 1000 to get seconds
         String roundedAverageLifespan = String.format("%.2f", averageLifespan);
         String msg5 = ("average reaction speed: " + roundedAverageLifespan );
+
+//        misclicks = totalClicks - molesMissed;
+
+        writeResultsToFile(roundedWhacksPerSecond, roundedAverageLifespan);
 
         Font myFont = new Font("Geneva", Font.BOLD, 24);
         FontMetrics fontMetrics = this.getFontMetrics(myFont);
@@ -260,7 +272,39 @@ public class Board extends JPanel {
 
         mainMenuButton.setVisible(true);
         replayButton.setVisible(true);
+
     }
+
+    private static final String RESULTS_FILENAME = "Whac-a-mole-results.csv";
+
+    private void writeResultsToFile(String roundedWhacksPerSecond, String roundedAverageLifespan) {
+        PrintWriter writer = null;
+        File file = new File(RESULTS_FILENAME);
+        try {
+            if (file.createNewFile()) {
+                writer = new PrintWriter(new FileWriter(RESULTS_FILENAME));
+                // Write the header
+                writer.println("Game time;hits;missed;Moles per second;average reaction speed"); //misclicks;
+            } else {
+                writer = new PrintWriter(new FileWriter(RESULTS_FILENAME, true));
+            }
+            writer.print(GAME_LENGTH + ";");;
+            writer.print(molesWhacked + ";");
+            writer.print(molesMissed + ";");
+//            writer.print(misclicks + ";");
+            writer.print(roundedWhacksPerSecond + ";");
+            writer.print(roundedAverageLifespan);
+            writer.println();
+        } catch (IOException e) {
+            // Ignore error, just log the stacktrace
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
 
     private void drawMessage(Graphics g, String msg, FontMetrics fontMetrics, int i) {
         g.drawString(msg,
@@ -286,6 +330,7 @@ public class Board extends JPanel {
                     null));
             molesOnScreen = 9;
             isRunning = true;
+            isGameOver = false;
 
             initialiseMoles();
 

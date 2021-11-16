@@ -269,7 +269,6 @@ public class Board extends JPanel {
         Duration duration = Duration.between(startTime, endTime);
         long millis = duration.toMillis();
         long secsWithWaitingTime = (millis + 500) / 1000;
-        long secsNetto = secsWithWaitingTime - numberOfAttempts * 2;
 
         long minutes = duration.toMinutes();
         long seconds = secsWithWaitingTime - minutes*60;
