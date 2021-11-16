@@ -44,8 +44,11 @@ public class Menu_Board extends JPanel {
         badGuysButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
         badGuysButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  3* BUTTON_HEIGHT);
         badGuysButton.addActionListener(e -> {
-            BadGuysMain game = new BadGuysMain();
-            game.setVisible(true);
+            EventQueue.invokeLater(() -> {
+                BadGuysMain ex = new BadGuysMain();
+                ex.setVisible(true);
+            });
+
         });
 
         JButton whacAMoleButton = new JButton("play Whac-a-Mole");
