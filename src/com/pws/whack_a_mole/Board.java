@@ -97,7 +97,7 @@ public class Board extends JPanel {
         for (int row = 1; row <= 3; row++) {
             for (int column = 1; column <= 3; column++) {
 //                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
-                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20, rand.nextInt(251)));
+                moles.add(new Mole(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20, rand.nextInt(400)));
             }
         }
     }
@@ -112,7 +112,7 @@ public class Board extends JPanel {
             for (int column = 1; column <= 3; column++) {
                 Mole mole = moles.get(index);
                 mole.setXY(20 + row * MOLE_WIDTH + row * 20, 20 + column * MOLE_HEIGHT + column * 20);
-                mole.lifespan = rand.nextInt( 101);
+                mole.lifespan = rand.nextInt( 200);
                 index++;
             }
         }
@@ -162,7 +162,7 @@ public class Board extends JPanel {
 
             if (mole.isVisible()) {
 
-                if (mole.lifespan > 60) {
+                if (mole.lifespan > 120) {
                     mole.setVisible(false);
                     mole.setXY(giveCoordinates("x"), giveCoordinates("y"));
                     mole.lifespan = 0;
@@ -171,14 +171,14 @@ public class Board extends JPanel {
                     repaint();
                 }
             } else {
-                if (mole.lifespan > 120) {
+                if (mole.lifespan > 240) {
                     if (molesOnScreen <= MAXIMUM_MOLES) {
                         mole.setVisible(true);
                         mole.lifespan = 0;
                         molesOnScreen++;
                         repaint();
                     }else {
-                        mole.lifespan = rand.nextInt(101);
+                        mole.lifespan = rand.nextInt(200);
                     }
 
                 }
