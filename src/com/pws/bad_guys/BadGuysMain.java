@@ -23,7 +23,7 @@ public class BadGuysMain extends JFrame {
         setTitle("Hit the bad guy");
         setLocationRelativeTo(null);
         setResizable(false);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public static void main(String[] args) {

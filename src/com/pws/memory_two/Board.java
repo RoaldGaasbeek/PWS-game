@@ -21,7 +21,6 @@ public class Board extends JPanel {
     private final static int HGAP = 10;
     private final static int VGAP = 10;
     private final static int VMARGIN = 80;
-    private final MemoryMain main;
 
     private List<Tile> tiles = new ArrayList<>();
 
@@ -36,8 +35,7 @@ public class Board extends JPanel {
 
     private final Random random = new Random();
 
-    public Board(MemoryMain main) {
-        this.main = main;
+    public Board() {
         setPreferredSize(new Dimension(600, 400));
 
         GridLayout layout = new GridLayout(2, 4);

@@ -2,6 +2,8 @@ package com.pws.bad_guys;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.TextAttribute;
+import java.util.Collections;
 import java.util.Random;
 
 import javax.swing.*;
@@ -53,13 +55,20 @@ public class Board extends JPanel {
         textPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPane.setSize(350, 100);
         textPane.setEditable(false);
+
+//        Font font = textPane.getFont();
+//        font = font.deriveFont(
+//            Collections.singletonMap(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD));
+//
+        Font font = new Font("Dialog", Font.BOLD, 14);
+
+        textPane.setFont(font);
         textPane.setText("\n\n" +
-            "  Your challenge, if you choose to accept, is to\n" +
-            "  hit as many bad guys as you can within 30 seconds.\n\n" +
-            "  By the way, don't hit the good guys!\n\n" +
-            "\tAccept mission (spacebar)\n" +
-            "\tChicken out (any other key)\n" +
-            "\n\n");
+            "Your challenge, if you choose to accept, is to\n" +
+            "hit as many bad guys as you can within 30 seconds.\n\n" +
+            "By the way, don't hit the good guys!\n\n" +
+            "\tAccept challenge (spacebar)\n" +
+            "\tChicken out (any other key)\n");
 
         return textPane;
     }
@@ -100,7 +109,7 @@ public class Board extends JPanel {
     private void initNorthPanel() {
         northPanel.setLayout(new FlowLayout());
         northPanel.setBackground(Color.getHSBColor(70f, 10f, 100f));
-        northPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+        northPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black));
         northPanel.add(thievesLabel);
         northPanel.add(scoreLabel);
         northPanel.add(resultLabel);
@@ -266,10 +275,11 @@ public class Board extends JPanel {
                     handleHitAction();
                 }
             } else {
-
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     startGame();
                 } else {
+                    //JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(Board.this);
+                    //topFrame.dispose();
                     System.exit(0);
                 }
             }

@@ -31,7 +31,7 @@ public class SpeedScore extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setPreferredSize(new Dimension(100, this.getHeight()));
         setBackground(Color.getHSBColor(70f, 10f, 100f));
-        setBorder(BorderFactory.createLineBorder(Color.black));
+        setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
 
         add(labelFast);
         add(labelSlow);
@@ -42,15 +42,19 @@ public class SpeedScore extends JPanel {
         labelFast.setText(" Fast: ---- ms");
         labelSlow.setText(" Slow: ---- ms");
         labelAvg.setText(" Avg:  ---- ms");
-        hitTimes.clear();
 
+        fastest = 0;
+        slowest = 0;
+        avg = 0;
+        hitTimes.clear();
     }
 
     public void processTime(int millis) {
         if (fastest == 0 || millis < fastest) {
             fastest = millis;
             labelFast.setText(" Fast: " + millis);
-        } else if (slowest == 0 || millis > slowest) {
+        }
+        if (slowest == 0 || millis > slowest) {
             slowest = millis;
             labelSlow.setText(" SLow: " + millis);
         }
