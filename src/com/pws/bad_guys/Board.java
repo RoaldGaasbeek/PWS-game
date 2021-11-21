@@ -1,113 +1,81 @@
 package com.pws.bad_guys;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
+
+import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 public class Board extends JPanel {
 
     private static final int TIMER_DELAY = 2000;
     private static final int TIMER_DELAY_SHORT = 200;
+    private static final int FINISH_SCORE = 100;
+    private static final int GAME_DURATION = 30;
+    private static final int GAME_DURATION_COUNT = GAME_DURATION / (TIMER_DELAY / 1000);
+    private static final int SCORE_GOOD_GUY = 10;
+    private static final int SCORE_BAD_GUY = 20;
 
     private final Random random;
-    private final LayoutManager layout;
-    private final Container contentPane;
-    private final BadGuysMain main;
-    private Guy jumper;
-    private JLabel thiefsLabel = new JLabel("Bad guys hit: ");
-    private JLabel scoreLabel = new JLabel("0");
+    private final Guy guy;
+    private final JLabel thievesLabel = new JLabel("");
+    private final JLabel scoreLabel = new JLabel("");
     private int score = 0;
-    private JLabel resultLabel = new JLabel("");
-    private JTextArea startupMessageTextArea;
+    private int badGuysHit = 0;
+    private final JLabel resultLabel = new JLabel("");
     private boolean isRunning = false;
     private int counter = 0;
-    private int inactiveCounter = 0;
+    private int gameCount = 0;
 
-    private JPanel northPanel = new JPanel();
-    private SpeedScore speedScore = new SpeedScore();
-    private JPanel centerPanel = new JPanel();
+    private final  JPanel northPanel = new JPanel();
+    private final SpeedScore speedScore = new SpeedScore();
+    private final JPanel centerPanel = new JPanel();
 
 
-    public Board(LayoutManager layout, Container contentPane, BadGuysMain main) {
-        this.main = main;
-        this.layout = layout;
-        this.contentPane = contentPane;
-
+    public Board() {
         setLayout(new BorderLayout());
 
-        jumper = new Guy(50, 50, true);
+        guy = new Guy(50, 50, true);
         random = new Random();
-
-        setupStartText();
     }
 
-    private void setupStartText() {
-        startupMessageTextArea = new JTextArea();
-        startupMessageTextArea.setWrapStyleWord(true);
-        startupMessageTextArea.setLineWrap(true);
-        startupMessageTextArea.setAlignmentY(10);
-        startupMessageTextArea.setTabSize(4);
-        startupMessageTextArea.setSize(350, 100);
-        startupMessageTextArea.setEditable(false);
-        startupMessageTextArea.setText("\n\n" +
-                "  Your challenge, if you choose to accept, is to\n" +
-                "  hit as many bad guys as you can within 30 seconds.\n\n" +
-                "  By the way, don't hit the good guys!\n\n" +
-                "\tAccept mission (spacebar)\n" +
-                "\tChicken out (any other key)\n" +
-                "\n\n");
+    private JTextPane setupStartText() {
+        JTextPane textPane = new JTextPane();
+        textPane.setBackground(Color.getHSBColor(70f, 10f, 100f));
+        textPane.setBorder(BorderFactory.createLineBorder(Color.black));
 
+        SimpleAttributeSet attribs = new SimpleAttributeSet();
+        StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
+        textPane.setParagraphAttributes(attribs, true);
+        textPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPane.setSize(350, 100);
+        textPane.setEditable(false);
+        textPane.setText("\n\n" +
+            "  Your challenge, if you choose to accept, is to\n" +
+            "  hit as many bad guys as you can within 30 seconds.\n\n" +
+            "  By the way, don't hit the good guys!\n\n" +
+            "\tAccept mission (spacebar)\n" +
+            "\tChicken out (any other key)\n" +
+            "\n\n");
 
+        return textPane;
     }
 
     public void initBoard() {
         addKeyListener(new TAdapter());
         addMouseListener(new MyMouseListener());
-        addMouseMotionListener(new MyMouseMotionListener());
-        setBackground(Color.GREEN);
+        setBackground(Color.getHSBColor(70f, 10f, 100f));
         setFocusable(true);
 
         setGameVisibility();
 
-        northPanel.setLayout(new FlowLayout());
-        northPanel.add(thiefsLabel);
-        northPanel.add(scoreLabel);
-        northPanel.add(resultLabel);
+        initNorthPanel();
+        initCenterPanel();
 
         add(BorderLayout.NORTH, northPanel);
-
         add(BorderLayout.EAST, speedScore);
-
-        ImageIcon ii = new ImageIcon("src/resources/bad-guys/blue.png");
-        ImageIcon iiPressed = new ImageIcon("src/resources/bad-guys/thief-40x40.png");
-
-        JButton startButton = new JButton("Bad Guys", ii);
-        startButton.setSize(ii.getIconWidth(), ii.getIconHeight());
-        startButton.setPressedIcon(iiPressed);
-        //startButton.setMaximumSize(new Dimension(150, 40));
-        //startButton.setBackground(Color.green);
-        //startButton.setHorizontalTextPosition(SwingConstants.RIGHT);
-        //startButton.setIconTextGap(20);
-        //startButton.setBorder(BorderFactory.createLineBorder(Color.darkGray, 2));
-//        startButton.setHorizontalAlignment(SwingConstants.LEADING);
-//        startButton.setRolloverEnabled(true);
-        startButton.setRolloverIcon(ii);
-//        startButton.setBounds(100,60,120,50);
-        startButton.setPreferredSize(new Dimension(ii.getIconWidth(), ii.getIconHeight()));
-        startButton.setOpaque(false);
-        startButton.setContentAreaFilled(false);
-        startButton.setBorderPainted(false);
-        startButton.setHorizontalTextPosition(JButton.CENTER);
-        startButton.setVerticalTextPosition(JButton.CENTER);
-
-
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
-        centerPanel.add(startupMessageTextArea);
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        centerPanel.add(startButton);
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
         add(BorderLayout.CENTER, centerPanel);
 
         setGameVisibility();
@@ -120,11 +88,49 @@ public class Board extends JPanel {
         Timer timer2 = new Timer(TIMER_DELAY_SHORT, new MyActionListener());
         timer2.setActionCommand("JUMPER_FAST");
         timer2.start();
+    }
 
+    private void initCenterPanel() {
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.add(setupStartText());
+        centerPanel.add(createStartButton());
+    }
+
+    private void initNorthPanel() {
+        northPanel.setLayout(new FlowLayout());
+        northPanel.setBackground(Color.getHSBColor(70f, 10f, 100f));
+        northPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+        northPanel.add(thievesLabel);
+        northPanel.add(scoreLabel);
+        northPanel.add(resultLabel);
+    }
+
+    private JButton createStartButton() {
+        ImageIcon ii = new ImageIcon("src/resources/bad-guys/blue-button.png");
+
+        JButton startButton = new JButton("Bad Guys", ii);
+        startButton.setSize(ii.getIconWidth(), ii.getIconHeight());
+        startButton.setHorizontalAlignment(SwingConstants.LEADING);
+        startButton.setRolloverEnabled(true);
+        startButton.setRolloverIcon(ii);
+        startButton.setPreferredSize(new Dimension(ii.getIconWidth(), ii.getIconHeight()));
+        startButton.setOpaque(false);
+        startButton.setContentAreaFilled(false);
+        startButton.setBorderPainted(false);
+        startButton.setHorizontalTextPosition(JButton.CENTER);
+        startButton.setVerticalTextPosition(JButton.CENTER);
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                startGame();
+            }
+        });
+        return startButton;
     }
 
     private void setGameVisibility() {
-        jumper.setVisible(isRunning);
+        guy.setVisible(isRunning);
         northPanel.setVisible(isRunning);
         speedScore.setVisible(isRunning);
         centerPanel.setVisible(!isRunning);
@@ -135,10 +141,8 @@ public class Board extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (isRunning) {
-            if (jumper.isVisible()) {
-                drawJumper(g);
-            }
+        if (isRunning && guy.isVisible()) {
+            drawJumper(g);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -147,8 +151,8 @@ public class Board extends JPanel {
 
     private void drawJumper(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(jumper.getImage(), jumper.getX(),
-                jumper.getY(), this);
+        g2d.drawImage(guy.getImage(), guy.getX(),
+            guy.getY(), this);
     }
 
 
@@ -161,27 +165,15 @@ public class Board extends JPanel {
             }
 
             if ("JUMPER_SLOW".equals(actionEvent.getActionCommand())) {
+                gameCount++;
+                if (gameCount > GAME_DURATION_COUNT) {
+                    gameOver();
+                }
                 setJumperPositionAndRepaint(true);
             } else if ("JUMPER_FAST".equals(actionEvent.getActionCommand())) {
                 setJumperPositionAndRepaint(false);
             }
 
-        }
-    }
-
-    private class MyShortActionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            if (!isRunning) {
-                return;
-            }
-
-            if ("RESULT LABEL".equals(actionEvent.getActionCommand())) {
-                //resultLabel.setVisible(false);
-
-                //setJumperPostionAndRepaint(false);
-            }
         }
     }
 
@@ -191,22 +183,21 @@ public class Board extends JPanel {
         if (!forced) {
             counter++;
 
-              if (!jumper.isVisible()) {
-                if (counter > 10) {
-                    jumper.setVisible(true);
-                    counter = random.nextInt(7);
-
-                    newBadGuy = true;
-                }
+            if (!guy.isVisible() && counter > 10) {
+                guy.setVisible(true);
+                counter = random.nextInt(7);
+                newBadGuy = true;
             }
         }
 
         if (newBadGuy) {
-            int newX = random.nextInt(400 - Guy.WIDTH);
-            int newY = random.nextInt(400 - Guy.HEIGHT);
-            jumper.setXY(newX, newY);
-            jumper.setVisible(true);
-            jumper.determineType();
+            int xOffset = speedScore.getWidth();
+            int yOffset = northPanel.getHeight();
+            int newX = random.nextInt(400 - Guy.WIDTH - xOffset);
+            int newY = random.nextInt(400 - Guy.HEIGHT - yOffset);
+            guy.setXY(newX, newY + yOffset);
+            guy.setVisible(true);
+            guy.determineType();
             repaint();
         }
     }
@@ -215,42 +206,57 @@ public class Board extends JPanel {
         if (!isRunning) {
             return;
         }
-        if (jumper.isVisible()) {
-            jumper.setVisible(false);
+        if (guy.isVisible()) {
+            guy.setVisible(false);
 
-            if (jumper.isBadGuy()) {
-                score += 10;
-                resultLabel.setText(" SCORE! Hitting took " + jumper.getTime() + " ms");
-                speedScore.processTime(jumper.getTime());
+            if (guy.isBadGuy()) {
+                score += SCORE_GOOD_GUY;
+                badGuysHit++;
+                updateThieves();
+                updateResult(" |  SCORE! Hitting took " + guy.getTime() + " ms");
+                speedScore.processTime(guy.getTime());
             } else {
-                score -= 50;
-                resultLabel.setText(" DON't HIT THE GOOD GUY!");
+                score -= SCORE_BAD_GUY;
+                updateResult(" |  DON't HIT THE GOOD GUY!");
             }
-            scoreLabel.setText("" + score);
+            updateScore();
 
-            jumper.determineType();
-
-
-
-
+            guy.determineType();
             counter = random.nextInt(3);
             repaint();
         } else {
             score -= 5;
-            scoreLabel.setText("" + score);
-            resultLabel.setText("MISSED!");
+            updateScore();
+            updateResult(" |  MISSED!");
         }
 
         resultLabel.setVisible(true);
 
+        if (score >= FINISH_SCORE) {
+            gameOver();
+        }
+    }
+
+    private void updateResult(String text) {
+        resultLabel.setText(text);
+    }
+
+    private void updateScore() {
+        scoreLabel.setText(" |  Score: " + score);
+    }
+
+    private void gameOver() {
+        isRunning = false;
+
+        if (score >= FINISH_SCORE) {
+            updateResult(" |  Game over. You reached the score in " + gameCount * 2 + " seconds.");
+        } else {
+            updateResult(" |  Game over. Time is up!");
+        }
     }
 
 
     private class TAdapter extends KeyAdapter {
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-        }
 
         @Override
         public void keyPressed(KeyEvent e) {
@@ -261,9 +267,7 @@ public class Board extends JPanel {
             } else {
 
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    isRunning = true;
-                    setGameVisibility();
-                    revalidate();
+                    startGame();
                 } else {
                     System.exit(0);
                 }
@@ -271,8 +275,23 @@ public class Board extends JPanel {
         }
     }
 
-    private class MyMouseMotionListener extends MouseMotionAdapter {
+    private void startGame() {
+        isRunning = true;
+        gameCount = 0;
+        score = 0;
+        badGuysHit = 0;
+        updateThieves();
+        updateScore();
+        updateResult("");
 
+        speedScore.init();
+
+        setGameVisibility();
+        revalidate();
+    }
+
+    private void updateThieves() {
+        thievesLabel.setText("Bad guys hit: " + badGuysHit);
     }
 
     private class MyMouseListener extends MouseAdapter {

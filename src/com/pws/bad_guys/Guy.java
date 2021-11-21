@@ -1,21 +1,18 @@
 package com.pws.bad_guys;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
+import javax.swing.*;
+
 public class Guy {
     public static final Random random = new Random();
-    public final static int WIDTH = 40;
-    public final static int HEIGHT = 40;
+    public static final int WIDTH = 60;
+    public static final int HEIGHT = 60;
     private boolean isBadGuy;
 
-    private int dx;
-    private int dy;
     private int x;
     private int y;
-    private int w;
-    private int h;
     private Image image;
     private boolean isVisible;
     private long start;
@@ -38,9 +35,6 @@ public class Guy {
             ii = new ImageIcon("src/resources/bad-guys/good_guy.png");
         }
         image = ii.getImage().getScaledInstance(WIDTH, HEIGHT, Image.SCALE_DEFAULT);
-
-        w = WIDTH;//image.getWidth(null);
-        h = HEIGHT;//image.getHeight(null);
     }
 
     public int getX() {
@@ -81,7 +75,6 @@ public class Guy {
         } else {
             return System.currentTimeMillis() - start;
         }
-
     }
 
     public boolean isVisible() {
