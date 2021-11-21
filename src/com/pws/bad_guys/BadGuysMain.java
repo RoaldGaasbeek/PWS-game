@@ -18,12 +18,12 @@ public class BadGuysMain extends JFrame {
         board.initBoard();
         add(CENTER, board);
 
-        setTitle("Hit the bad guy");
-        setSize(600, 600);
+        pack();
 
+        setTitle("Hit the bad guy");
         setLocationRelativeTo(null);
         setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public static void main(String[] args) {

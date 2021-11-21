@@ -36,6 +36,7 @@ public class Board extends JPanel {
 
     public Board() {
         setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(600, 400));
 
         guy = new Guy(50, 50, true);
         random = new Random();

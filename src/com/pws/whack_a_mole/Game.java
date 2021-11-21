@@ -23,7 +23,7 @@ public class Game extends JFrame {
 
         setTitle("Whac-a-mole");
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
 

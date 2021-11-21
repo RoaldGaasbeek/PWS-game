@@ -38,8 +38,9 @@ public class Board extends JPanel {
 
     public Board(MemoryMain main) {
         this.main = main;
+        setPreferredSize(new Dimension(600, 400));
+
         GridLayout layout = new GridLayout(2, 4);
-        //FlowLayout layout = new FlowLayout();
         layout.setHgap(10);
         layout.setVgap(10);
         setLayout(layout);

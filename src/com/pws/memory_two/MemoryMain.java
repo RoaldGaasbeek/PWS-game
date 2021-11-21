@@ -20,12 +20,12 @@ public class MemoryMain extends JFrame {
         // initBoard needs to be AFTER the board is added to the frame to resize properly.
         board.initBoard();
 
-        setTitle("Memory");
-        setSize(400, 400);
+        pack();
 
+        setTitle("Memory");
         setLocationRelativeTo(null);
-//        setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public static void main(String[] args) {
