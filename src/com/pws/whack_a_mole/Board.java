@@ -164,7 +164,7 @@ public class Board extends JPanel {
 
                 if (mole.lifespan > 120) {
                     mole.setVisible(false);
-                    mole.setXY(giveCoordinates("x"), giveCoordinates("y"));
+                    giveCoordinates(mole);
                     mole.lifespan = 0;
                     molesOnScreen--;
                     molesMissed++;
@@ -186,32 +186,31 @@ public class Board extends JPanel {
         }
     }
 
-    private int giveCoordinates(String xory) {
-        int randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
-        int randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
-        int dx = 1000;
-        int dy = 1000;
-        ArrayList<Integer> dxs = new ArrayList<>();
-        ArrayList<Integer> dys = new ArrayList<>();
-        while ((((int) Math.sqrt((dx * dx) + (dy * dy))) > (MOLE_WIDTH + MOLE_HEIGHT)) | (randX < 30 && randY < 60)) {
-            dxs.clear();
-            dys.clear();
+    private void giveCoordinates(Mole mole) {
+
+        boolean overlaps = true;
+        int randX = 0;
+        int randY = 0;
+
+        while (overlaps) {
             randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
             randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
+
+            overlaps = false;
             for (Mole mole1 : moles) {
-                dxs.add((int) Math.abs((randX - mole1.getX())));
-                dys.add((int) Math.abs((randY - mole1.getY())));
+                if (( mole1.getX() - MOLE_WIDTH < randX && randX < mole1.getX() + MOLE_WIDTH ) &&
+                        ( mole1.getY() - MOLE_HEIGHT < randY && randY < mole1.getY() + MOLE_HEIGHT )) {
+
+                    overlaps = true;
+                    break;
+                }
+
             }
-            dx = (getSmallest(dxs, 9));
-            dy = (getSmallest(dys, 9));
         }
 
-        if (Objects.equals(xory, "x")) {
-            return (randX);
-        } else {
-            return (randY);
-        }
+        mole.setXY(randX, randY);
     }
+
 
     private void whack(int mx, int my) {
         for (Mole mole : moles) {
@@ -221,8 +220,7 @@ public class Board extends JPanel {
                 molesWhacked++;
                 lifespans.add((double) mole.lifespan);
                 molesOnScreen--;
-                mole.setXY(giveCoordinates("x"), giveCoordinates("y"));
-//                moles.add(new Mole(rand.nextInt(BOARD_WIDTH - MOLE_WIDTH), rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT)));
+                giveCoordinates(mole);
                 mole.setVisible(false);
             }
         }
@@ -288,7 +286,7 @@ public class Board extends JPanel {
             } else {
                 writer = new PrintWriter(new FileWriter(RESULTS_FILENAME, true));
             }
-            writer.print(GAME_LENGTH + ";");;
+            writer.print(GAME_LENGTH + ";");
             writer.print(molesWhacked + ";");
             writer.print(molesMissed + ";");
 //            writer.print(misclicks + ";");
