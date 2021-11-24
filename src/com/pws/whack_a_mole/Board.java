@@ -193,8 +193,8 @@ public class Board extends JPanel {
         int randY = 0;
 
         while (overlaps) {
-            randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH);
-            randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT);
+            randX = rand.nextInt(BOARD_WIDTH - MOLE_WIDTH - 80) + 40;
+            randY = rand.nextInt(BOARD_HEIGHT - MOLE_HEIGHT - 80) + 40;
 
             overlaps = false;
             for (Mole mole1 : moles) {

@@ -10,12 +10,15 @@ import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import static com.pws.Button.BUTTON_HEIGHT;
+import static com.pws.Button.BUTTON_WIDTH;
+
 public class Board extends JPanel {
 
     private static final int TIMER_DELAY = 2000;
     private static final int TIMER_DELAY_SHORT = 200;
     private static final int FINISH_SCORE = 100;
-    private static final int GAME_DURATION = 30;
+    private static final int GAME_DURATION = 10;
     private static final int GAME_DURATION_COUNT = GAME_DURATION / (TIMER_DELAY / 1000);
     private static final int SCORE_GOOD_GUY = 10;
     private static final int SCORE_BAD_GUY = 20;
@@ -34,6 +37,10 @@ public class Board extends JPanel {
     private final  JPanel northPanel = new JPanel();
     private final SpeedScore speedScore = new SpeedScore();
     private final JPanel centerPanel = new JPanel();
+    private final JPanel southPanel = new JPanel();
+    private JButton replayButton;
+    private JButton mainMenuButton;
+
 
 
     public Board() {
@@ -66,9 +73,7 @@ public class Board extends JPanel {
         textPane.setText("\n\n" +
             "Your challenge, if you choose to accept, is to\n" +
             "hit as many bad guys as you can within 30 seconds.\n\n" +
-            "By the way, don't hit the good guys!\n\n" +
-            "\tAccept challenge (spacebar)\n" +
-            "\tChicken out (any other key)\n");
+            "By the way, don't hit the good guys!\n\n");
 
         return textPane;
     }
@@ -83,10 +88,12 @@ public class Board extends JPanel {
 
         initNorthPanel();
         initCenterPanel();
+        initSouthPanel();
 
         add(BorderLayout.NORTH, northPanel);
         add(BorderLayout.EAST, speedScore);
         add(BorderLayout.CENTER, centerPanel);
+        add(BorderLayout.SOUTH, southPanel);
 
         setGameVisibility();
         revalidate();
@@ -98,6 +105,17 @@ public class Board extends JPanel {
         Timer timer2 = new Timer(TIMER_DELAY_SHORT, new MyActionListener());
         timer2.setActionCommand("JUMPER_FAST");
         timer2.start();
+    }
+
+    private void initSouthPanel() {
+        southPanel.setLayout(new FlowLayout());
+
+        replayButton = createReplayButton();
+        mainMenuButton = createMainMenuButton();
+
+        southPanel.add(replayButton);
+        southPanel.add(mainMenuButton);
+        southPanel.setVisible(false);
     }
 
     private void initCenterPanel() {
@@ -138,6 +156,27 @@ public class Board extends JPanel {
         });
         return startButton;
     }
+
+    private JButton createReplayButton() {
+        JButton replayButton = new JButton("play again");
+        replayButton.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        replayButton.addActionListener(e -> {
+            southPanel.setVisible(false);
+            startGame();
+        });
+        return replayButton;
+    }
+
+    private JButton createMainMenuButton() {
+        JButton mainMenuButton = new JButton("back to menu");
+        mainMenuButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
+        mainMenuButton.addActionListener(e -> {
+            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(Board.this);
+            topFrame.setVisible(false);
+        });
+        return mainMenuButton;
+    }
+
 
     private void setGameVisibility() {
         guy.setVisible(isRunning);
@@ -263,6 +302,9 @@ public class Board extends JPanel {
         } else {
             updateResult(" |  Game over. Time is up!");
         }
+        mainMenuButton.setVisible(true);
+        replayButton.setVisible(true);
+        southPanel.setVisible(true);
     }
 
 
@@ -273,14 +315,6 @@ public class Board extends JPanel {
             if (isRunning) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     handleHitAction();
-                }
-            } else {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    startGame();
-                } else {
-                    //JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(Board.this);
-                    //topFrame.dispose();
-                    System.exit(0);
                 }
             }
         }

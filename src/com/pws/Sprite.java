@@ -24,6 +24,8 @@ public class Sprite {
         ImageIcon imageIcon = new ImageIcon(imageName);
 
         image = imageIcon.getImage();
+
+        getImageDimensions();
     }
 
     protected void loadImage(String imageName, int width, int height) {
