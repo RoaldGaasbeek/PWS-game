@@ -2,23 +2,20 @@ package com.pws.bad_guys;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.TextAttribute;
-import java.util.Collections;
 import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import static com.pws.Button.BUTTON_HEIGHT;
-import static com.pws.Button.BUTTON_WIDTH;
+import com.pws.common.MenuButton;
 
 public class Board extends JPanel {
 
     private static final int TIMER_DELAY = 2000;
     private static final int TIMER_DELAY_SHORT = 200;
     private static final int FINISH_SCORE = 100;
-    private static final int GAME_DURATION = 10;
+    private static final int GAME_DURATION = 1;
     private static final int GAME_DURATION_COUNT = GAME_DURATION / (TIMER_DELAY / 1000);
     private static final int SCORE_GOOD_GUY = 10;
     private static final int SCORE_BAD_GUY = 20;
@@ -37,7 +34,6 @@ public class Board extends JPanel {
     private final  JPanel northPanel = new JPanel();
     private final SpeedScore speedScore = new SpeedScore();
     private final JPanel centerPanel = new JPanel();
-    private final JPanel southPanel = new JPanel();
     private JButton replayButton;
     private JButton mainMenuButton;
 
@@ -48,6 +44,7 @@ public class Board extends JPanel {
         setPreferredSize(new Dimension(600, 400));
 
         guy = new Guy(50, 50, true);
+        guy.setVisible(false);
         random = new Random();
     }
 
@@ -62,14 +59,6 @@ public class Board extends JPanel {
         textPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPane.setSize(350, 100);
         textPane.setEditable(false);
-
-//        Font font = textPane.getFont();
-//        font = font.deriveFont(
-//            Collections.singletonMap(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD));
-//
-        Font font = new Font("Dialog", Font.BOLD, 14);
-
-        textPane.setFont(font);
         textPane.setText("\n\n" +
             "Your challenge, if you choose to accept, is to\n" +
             "hit as many bad guys as you can within 30 seconds.\n\n" +
@@ -88,12 +77,11 @@ public class Board extends JPanel {
 
         initNorthPanel();
         initCenterPanel();
-        initSouthPanel();
+        initMenuButtons();
 
         add(BorderLayout.NORTH, northPanel);
         add(BorderLayout.EAST, speedScore);
         add(BorderLayout.CENTER, centerPanel);
-        add(BorderLayout.SOUTH, southPanel);
 
         setGameVisibility();
         revalidate();
@@ -107,19 +95,17 @@ public class Board extends JPanel {
         timer2.start();
     }
 
-    private void initSouthPanel() {
-        southPanel.setLayout(new FlowLayout());
-
+    private void initMenuButtons() {
         replayButton = createReplayButton();
         mainMenuButton = createMainMenuButton();
 
-        southPanel.add(replayButton);
-        southPanel.add(mainMenuButton);
-        southPanel.setVisible(false);
+        speedScore.add(replayButton);
+        speedScore.add(mainMenuButton);
     }
 
     private void initCenterPanel() {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBackground(Color.getHSBColor(70f, 10f, 100f));
         centerPanel.add(setupStartText());
         centerPanel.add(createStartButton());
     }
@@ -134,20 +120,7 @@ public class Board extends JPanel {
     }
 
     private JButton createStartButton() {
-        ImageIcon ii = new ImageIcon("src/resources/bad-guys/blue-button.png");
-
-        JButton startButton = new JButton("Bad Guys", ii);
-        startButton.setSize(ii.getIconWidth(), ii.getIconHeight());
-        startButton.setHorizontalAlignment(SwingConstants.LEADING);
-        startButton.setRolloverEnabled(true);
-        startButton.setRolloverIcon(ii);
-        startButton.setPreferredSize(new Dimension(ii.getIconWidth(), ii.getIconHeight()));
-        startButton.setOpaque(false);
-        startButton.setContentAreaFilled(false);
-        startButton.setBorderPainted(false);
-        startButton.setHorizontalTextPosition(JButton.CENTER);
-        startButton.setVerticalTextPosition(JButton.CENTER);
-        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JButton startButton = MenuButton.createMenuButton("Start", true);
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -158,18 +131,17 @@ public class Board extends JPanel {
     }
 
     private JButton createReplayButton() {
-        JButton replayButton = new JButton("play again");
-        replayButton.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        JButton replayButton = MenuButton.createMenuButton("play again", false);
         replayButton.addActionListener(e -> {
-            southPanel.setVisible(false);
+            replayButton.setVisible(false);
+            mainMenuButton.setVisible(false);
             startGame();
         });
         return replayButton;
     }
 
     private JButton createMainMenuButton() {
-        JButton mainMenuButton = new JButton("back to menu");
-        mainMenuButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
+        JButton mainMenuButton = MenuButton.createMenuButton("back to menu", false);
         mainMenuButton.addActionListener(e -> {
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(Board.this);
             topFrame.setVisible(false);
@@ -304,7 +276,6 @@ public class Board extends JPanel {
         }
         mainMenuButton.setVisible(true);
         replayButton.setVisible(true);
-        southPanel.setVisible(true);
     }
 
 
@@ -330,6 +301,8 @@ public class Board extends JPanel {
         updateResult("");
 
         speedScore.init();
+        mainMenuButton.setVisible(false);
+        replayButton.setVisible(false);
 
         setGameVisibility();
         revalidate();

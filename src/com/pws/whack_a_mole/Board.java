@@ -1,29 +1,23 @@
 package com.pws.whack_a_mole;
 
-//import com.pws.Button;
-//import com.pws.main_menu.Menu_Board;
-//import java.awt.geom.Rectangle2D;
+import static com.pws.whack_a_mole.Mole.MOLE_HEIGHT;
+import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.lang.Math;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
+import javax.swing.*;
 
-import static com.pws.Button.BUTTON_HEIGHT;
-import static com.pws.Button.BUTTON_WIDTH;
-import static com.pws.whack_a_mole.Mole.MOLE_HEIGHT;
-import static com.pws.whack_a_mole.Mole.MOLE_WIDTH;
-import static com.zetcode.SmallestInArray.getSmallest;
+import com.pws.common.MenuButton;
 
 
 public class Board extends JPanel {
@@ -38,14 +32,14 @@ public class Board extends JPanel {
     private HitEffect hitEffect;
     private Timer timer;
     private Timer inGameTimer;
-    private boolean isRunning = true;
-    private boolean isGameOver = false;
+    private boolean isRunning = false;
+    private boolean isGameOver = true;
     private List<Mole> moles = new ArrayList<>();
 //    private List<com.pws.Button> buttons = new ArrayList<>();
     private Random rand = new Random();
     private double SECONDS_PASSED;
     private double SECONDS_REMAINING;
-    private double GAME_LENGTH = 60;
+    private double GAME_LENGTH = 10;
     private JButton replayButton;
     private JButton mainMenuButton;
     private int molesMissed = 0;
@@ -61,14 +55,6 @@ public class Board extends JPanel {
 
         createMoles();
 
-
-        // hides cursor
-        setCursor(getToolkit().createCustomCursor(
-                new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-                new Point(0, 0),
-                null));
-
-
         addMouseMotionListener(new MAdapter());
         addMouseListener(new MAdapter2());
         setBackground(Color.gray);
@@ -82,12 +68,30 @@ public class Board extends JPanel {
         mainMenuButton = createMainMenuButton();
         mainMenuButton.setVisible(false);
 
+        add(createStartButton());
         add(replayButton);
         add(mainMenuButton);
         inGameTimer = new Timer (100, new InGameTimer());
         timer = new Timer(PERIOD, new GameCycle());
         timer.start();
         inGameTimer.start();
+    }
+
+    private JButton createStartButton() {
+        JButton startButton = MenuButton.createMenuButton("Start", true);
+        startButton.setLocation(BOARD_WIDTH / 2 - startButton.getWidth() / 2, BOARD_HEIGHT - startButton.getHeight() - 2);
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                // hides cursor
+                hideCursor();
+
+                startButton.setVisible(false);
+                isRunning = true;
+                isGameOver = false;
+            }
+        });
+        return startButton;
     }
 
     private void createMoles() {
@@ -126,10 +130,6 @@ public class Board extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-//        Graphics2D g2d = (Graphics2D) g;
-
-
 
         if (isRunning) {
             doDrawing(g);
@@ -317,15 +317,12 @@ public class Board extends JPanel {
     }
 
     private JButton createReplayButton() {
-        JButton replayButton = new JButton("play again");
-        replayButton.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
-        replayButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH), BOARD_HEIGHT - 2 * BUTTON_HEIGHT);
+        JButton replayButton = MenuButton.createMenuButton("play again", false);
+        replayButton.setLocation(BOARD_WIDTH - replayButton.getWidth() - 2, BOARD_HEIGHT - 2 * replayButton.getHeight() - 6);
+
         replayButton.addActionListener(e -> {
             molesWhacked = 0;
-            setCursor(getToolkit().createCustomCursor(
-                    new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-                    new Point(0, 0),
-                    null));
+            hideCursor();
             molesOnScreen = 9;
             isRunning = true;
             isGameOver = false;
@@ -334,23 +331,28 @@ public class Board extends JPanel {
 
             showMoles(true);
 
-
             replayButton.setVisible(false);
             mainMenuButton.setVisible(false);
-
         });
+
         return replayButton;
     }
+
+    private void hideCursor() {
+        setCursor(getToolkit().createCustomCursor(
+            new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
+            new Point(0, 0),
+            null));
+    }
+
     private JButton createMainMenuButton() {
-        JButton mainMenuButton = new JButton("back to menu");
-        mainMenuButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
-        mainMenuButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT - BUTTON_HEIGHT);
+        JButton mainMenuButton = MenuButton.createMenuButton("back to menu", false);
+
+        mainMenuButton.setLocation(BOARD_WIDTH - mainMenuButton.getWidth() - 2, BOARD_HEIGHT - mainMenuButton.getHeight() - 2);
         mainMenuButton.addActionListener(e -> {
             game.setVisible(false);
 
-
             mainMenuButton.setVisible(false);
-
         });
         return mainMenuButton;
     }
@@ -388,9 +390,10 @@ public class Board extends JPanel {
     private class InGameTimer implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            SECONDS_PASSED = SECONDS_PASSED+ 0.1;
-            SECONDS_REMAINING = (GAME_LENGTH - SECONDS_PASSED);
-
+            if (isRunning) {
+                SECONDS_PASSED = SECONDS_PASSED + 0.1;
+                SECONDS_REMAINING = (GAME_LENGTH - SECONDS_PASSED);
+            }
         }
     }
 
@@ -400,6 +403,8 @@ public class Board extends JPanel {
             if (isRunning) {
                 showMole();
 //                updateInGameTimer();
+            } else {
+                repaint();
             }
         }
     }

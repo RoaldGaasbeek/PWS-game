@@ -8,10 +8,10 @@ import java.util.Optional;
 import javax.swing.*;
 
 public class SpeedScore extends JPanel {
-
-    private final JLabel labelAvg;
-    private final JLabel labelFast;
-    private final JLabel labelSlow;
+    private static int WIDTH = 145;
+    private final JLabel labelAvg = new JLabel("");;
+    private final JLabel labelFast = new JLabel("");;
+    private final JLabel labelSlow = new JLabel("");;
 
     private int fastest;
     private int slowest;
@@ -19,29 +19,25 @@ public class SpeedScore extends JPanel {
     private final List<Integer> hitTimes = new ArrayList<>();
 
     public SpeedScore() {
-        labelFast = new JLabel("");
-        labelFast.setSize(150, 20);
-        labelSlow = new JLabel("");
-        labelSlow.setSize(100, 20);
-        labelAvg = new JLabel("");
-        labelAvg.setSize(100, 20);
-
         init();
 
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setPreferredSize(new Dimension(100, this.getHeight()));
+        setLayout(new FlowLayout());
+        setSize(WIDTH, 100);
+        setPreferredSize(new Dimension(WIDTH, 100));
         setBackground(Color.getHSBColor(70f, 10f, 100f));
         setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
 
         add(labelFast);
         add(labelSlow);
         add(labelAvg);
+        add(Box.createHorizontalStrut(WIDTH));
+        add(Box.createRigidArea(new Dimension(10, 180)));
     }
 
     public void init() {
         labelFast.setText(" Fast: ---- ms");
         labelSlow.setText(" Slow: ---- ms");
-        labelAvg.setText(" Avg:  ---- ms");
+        labelAvg.setText(" Avg:   ---- ms");
 
         fastest = 0;
         slowest = 0;

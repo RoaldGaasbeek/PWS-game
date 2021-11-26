@@ -1,21 +1,15 @@
 package com.pws.main_menu;
 
-import com.pws.bad_guys.BadGuysMain;
-import com.pws.memory_two.MemoryMain;
-import com.pws.Button;
-import com.pws.whack_a_mole.Game;
-import com.pws.whack_a_mole.HitEffect;
-import com.pws.memory.memory_game;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
-import static com.pws.Button.BUTTON_HEIGHT;
-import static com.pws.Button.BUTTON_WIDTH;
+import javax.swing.*;
+
+import com.pws.bad_guys.BadGuysMain;
+import com.pws.common.MenuButton;
+import com.pws.memory_two.MemoryMain;
+import com.pws.whack_a_mole.Game;
+import com.pws.whack_a_mole.HitEffect;
 
 
 public class Menu_Board extends JPanel {
@@ -40,9 +34,8 @@ public class Menu_Board extends JPanel {
         setBackground(Color.CYAN);
         setLayout(null);
 
-        JButton badGuysButton = new JButton("play Bad guys");
-        badGuysButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
-        badGuysButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  3* BUTTON_HEIGHT);
+        JButton badGuysButton = MenuButton.createMenuButton("Bad guys", true);
+        badGuysButton.setLocation(BOARD_WIDTH - badGuysButton.getWidth() - 2, BOARD_HEIGHT -  3 * badGuysButton.getHeight() - 10);
         badGuysButton.addActionListener(e -> {
             EventQueue.invokeLater(() -> {
                 BadGuysMain ex = new BadGuysMain();
@@ -51,17 +44,15 @@ public class Menu_Board extends JPanel {
 
         });
 
-        JButton whacAMoleButton = new JButton("play Whac-a-Mole");
-        whacAMoleButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
-        whacAMoleButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH), BOARD_HEIGHT - 2 * BUTTON_HEIGHT);
+        JButton whacAMoleButton = MenuButton.createMenuButton("Whac-a-Mole", true);
+        whacAMoleButton.setLocation(BOARD_WIDTH - whacAMoleButton.getWidth() - 2, BOARD_HEIGHT - 2 * whacAMoleButton.getHeight() - 6);
         whacAMoleButton.addActionListener(e -> {
             Game game = new Game();
             game.setVisible(true);
         });
 
-        JButton memoryButton = new JButton("play Memory");
-        memoryButton.setSize((BUTTON_WIDTH), BUTTON_HEIGHT);
-        memoryButton.setLocation(BOARD_WIDTH - (BUTTON_WIDTH ), BOARD_HEIGHT -  BUTTON_HEIGHT);
+        JButton memoryButton = MenuButton.createMenuButton("Memory", true);
+        memoryButton.setLocation(BOARD_WIDTH - memoryButton.getWidth() - 2, BOARD_HEIGHT - memoryButton.getHeight() - 2);
         memoryButton.addActionListener(e -> {
             MemoryMain memory = new MemoryMain();
             memory.setVisible(true);

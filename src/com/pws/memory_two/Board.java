@@ -1,14 +1,12 @@
 package com.pws.memory_two;
 
-import static com.pws.Button.BUTTON_HEIGHT;
-import static com.pws.Button.BUTTON_WIDTH;
+
 import static java.util.stream.Collectors.toList;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -21,17 +19,17 @@ import javax.swing.Timer;
 
 public class Board extends JPanel {
 
-    private final static int HGAP = 10;
-    private final static int VGAP = 10;
-    private final static int VMARGIN = 80;
+    private static final int HGAP = 10;
+    private static final int VGAP = 10;
+    private static final int VMARGIN = 80;
 
-    private List<Tile> tiles = new ArrayList<>();
+    private final List<Tile> tiles = new ArrayList<>();
 
     private int tilesShown = 0;
     private int timerCounter = 40;
     private boolean matchFound = false;
     private int numberOfTiles = 8;
-    private Map<Integer, Integer> tilesNumberToColumns = new HashMap<>();
+    private final Map<Integer, Integer> tilesNumberToColumns = new HashMap<>();
     private int numberOfTilesFound = 0;
     private int numberOfAttempts = 0;
     private Instant startTime;
