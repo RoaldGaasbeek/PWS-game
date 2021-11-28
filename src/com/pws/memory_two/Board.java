@@ -7,6 +7,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -17,7 +21,7 @@ import java.util.stream.IntStream;
 import javax.swing.*;
 import javax.swing.Timer;
 
-public class Board extends JPanel {
+class Board extends JPanel {
 
     private static final int HGAP = 10;
     private static final int VGAP = 10;
@@ -36,7 +40,7 @@ public class Board extends JPanel {
 
     private final Random random = new Random();
 
-    public Board() {
+    Board() {
         setPreferredSize(new Dimension(600, 400));
 
         GridLayout layout = new GridLayout(2, 4);
@@ -52,7 +56,7 @@ public class Board extends JPanel {
     }
 
 
-    public void initBoard() {
+    void initBoard() {
         setFocusable(true);
 
         createMenu();
@@ -139,22 +143,20 @@ public class Board extends JPanel {
 
 
     private ActionListener createNumberOfTilesActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    numberOfTiles = Integer.valueOf(e.getActionCommand());
-                    JMenuItem menuItem = (JMenuItem) e.getSource();
+        return e -> {
+            try {
+                numberOfTiles = Integer.valueOf(e.getActionCommand());
+                JMenuItem menuItem = (JMenuItem) e.getSource();
 
-                    JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
-                    JMenu parent = (JMenu) popupMenu.getInvoker();
-                    MemorySet memorySet = MemorySet.valueOf(parent.getActionCommand());
+                JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
+                JMenu parent = (JMenu) popupMenu.getInvoker();
+                MemorySet memorySet = MemorySet.valueOf(parent.getActionCommand());
 
-                    createTiles(memorySet);
-                    revalidate();
-                    initialiseGameStats();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                createTiles(memorySet);
+                revalidate();
+                initialiseGameStats();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         };
     }
@@ -233,7 +235,7 @@ public class Board extends JPanel {
         startTime = Instant.now();
     }
 
-    public void handleTileClick(Tile tile) {
+    void handleTileClick(Tile tile) {
         if (tilesShown < 2) {
             tile.doShow(true);
 
@@ -279,6 +281,8 @@ public class Board extends JPanel {
         seconds = numberOfAttempts * 2 - minutes*60;
         String timeStringWaiting = String.format("%02d:%02d", minutes, seconds);
 
+        writeResultsToFile(secsWithWaitingTime, seconds);
+
         // show the results
         JOptionPane.showMessageDialog(
                 SwingUtilities.getWindowAncestor(this),
@@ -287,6 +291,38 @@ public class Board extends JPanel {
                 timeStringWaiting + " was waiting time.",
                 "Game finished", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    private static final String RESULTS_FILENAME = "results-memory.csv";
+
+    private void writeResultsToFile(long secsBruto, long secsNetto) {
+        PrintWriter writer = null;
+        File file = new File(RESULTS_FILENAME);
+        try {
+            // tile sets; number of tiles; number of attempts; bruto duration; netto duration
+            if (file.createNewFile()) {
+                writer = new PrintWriter(new FileWriter(RESULTS_FILENAME));
+                // Write the header
+                writer.println("no. Tiles;no. Attempts;duration bruto;duration netto"); //MemorySet; no. missed;
+            } else {
+                writer = new PrintWriter(new FileWriter(RESULTS_FILENAME, true));
+            }
+//            writer.print(MemorySet.name() + ";");
+            writer.print(numberOfTiles + ";");
+            writer.print(numberOfAttempts + ";");
+//            writer.print(missedChances + ";");
+            writer.print(secsBruto + ";");
+            writer.print(secsNetto);
+            writer.println();
+        } catch (IOException e) {
+            // Ignore error, just log the stacktrace
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
 
     private class TimerActionListener implements ActionListener {
         @Override

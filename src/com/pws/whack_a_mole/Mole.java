@@ -3,13 +3,13 @@ package com.pws.whack_a_mole;
 import com.pws.Sprite;
 
 
-public class Mole extends Sprite {
+class Mole extends Sprite {
 
-    public static final int MOLE_WIDTH = 70;
-    public static final int MOLE_HEIGHT = 70;
-    public int lifespan;
+    static final int MOLE_WIDTH = 70;
+    static final int MOLE_HEIGHT = 70;
+    int lifespan;
 
-    public Mole(int x, int y, int Lifespan) {
+    Mole(int x, int y, int Lifespan) {
         super(x, y);
         initMole();
         lifespan = Lifespan;

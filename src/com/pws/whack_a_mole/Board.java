@@ -23,15 +23,13 @@ import com.pws.common.MenuButton;
 public class Board extends JPanel {
     private static final int BOARD_WIDTH = 600;
     private static final int BOARD_HEIGHT = 400;
-    private final int FPS = 60;
-    private final int PERIOD = 1000 / FPS;
+    private int FPS = 60;
+    private int PERIOD = 1000 / FPS;
     private final int MAXIMUM_MOLES = 3;
     private final Game game;
     private int molesOnScreen = 9;
     private int molesWhacked = 0;
     private HitEffect hitEffect;
-    private Timer timer;
-    private Timer inGameTimer;
     private boolean isRunning = false;
     private boolean isGameOver = true;
     private List<Mole> moles = new ArrayList<>();
@@ -71,8 +69,8 @@ public class Board extends JPanel {
         add(createStartButton());
         add(replayButton);
         add(mainMenuButton);
-        inGameTimer = new Timer (100, new InGameTimer());
-        timer = new Timer(PERIOD, new GameCycle());
+        Timer inGameTimer = new Timer(100, new InGameTimer());
+        Timer timer = new Timer(PERIOD, new GameCycle());
         timer.start();
         inGameTimer.start();
     }
@@ -80,16 +78,13 @@ public class Board extends JPanel {
     private JButton createStartButton() {
         JButton startButton = MenuButton.createMenuButton("Start", true);
         startButton.setLocation(BOARD_WIDTH / 2 - startButton.getWidth() / 2, BOARD_HEIGHT - startButton.getHeight() - 2);
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                // hides cursor
-                hideCursor();
+        startButton.addActionListener(actionEvent -> {
+            // hides cursor
+            hideCursor();
 
-                startButton.setVisible(false);
-                isRunning = true;
-                isGameOver = false;
-            }
+            startButton.setVisible(false);
+            isRunning = true;
+            isGameOver = false;
         });
         return startButton;
     }
@@ -237,27 +232,25 @@ public class Board extends JPanel {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
-        String msg = "Game Over";
-        String msg2 = String.format("Moles whacked: %d", molesWhacked);
 
         double molesWhackedPerSecond = molesWhacked / GAME_LENGTH;
         String roundedWhacksPerSecond = String.format("%.2f", molesWhackedPerSecond);
-        String msg3 = ("Moles per second: " + roundedWhacksPerSecond);
-        String msg4 = ("moles missed: " + molesMissed);
-
+        // TODO: first moles spawn with a random life span
         double totalLifespans = 0;
-        for (Double d : lifespans) {
-            totalLifespans += d;
-        }
-
+        for (Double d : lifespans) totalLifespans += d;
         double averageLifespan = totalLifespans/molesWhacked;
-        averageLifespan = averageLifespan * 16 / 1000;  // 1000/FPS = 16 and divide by 1000 to get seconds
-        String roundedAverageLifespan = String.format("%.2f", averageLifespan);
-        String msg5 = ("average reaction speed: " + roundedAverageLifespan );
+        double averageLifespanInSec = averageLifespan * PERIOD / 1000;  // 1000/FPS = 16 and divide by 1000 to get seconds
+        String roundedAverageLifespan = String.format("%.2f", averageLifespanInSec);
 
 //        misclicks = totalClicks - molesMissed;
 
         writeResultsToFile(roundedWhacksPerSecond, roundedAverageLifespan);
+
+        String msg = "Game Over";
+        String msg2 = String.format("Moles whacked: %d", molesWhacked);
+        String msg3 = ("Moles per second: " + roundedWhacksPerSecond);
+        String msg4 = ("moles missed: " + molesMissed);
+        String msg5 = ("average reaction speed: " + roundedAverageLifespan );
 
         Font myFont = new Font("Geneva", Font.BOLD, 24);
         FontMetrics fontMetrics = this.getFontMetrics(myFont);
@@ -273,7 +266,7 @@ public class Board extends JPanel {
 
     }
 
-    private static final String RESULTS_FILENAME = "Whac-a-mole-results.csv";
+    private static final String RESULTS_FILENAME = "results-Whac-a-mole.csv";
 
     private void writeResultsToFile(String roundedWhacksPerSecond, String roundedAverageLifespan) {
         PrintWriter writer = null;
@@ -403,7 +396,7 @@ public class Board extends JPanel {
             if (isRunning) {
                 showMole();
 //                updateInGameTimer();
-            } else {
+            } else if (!isGameOver){
                 repaint();
             }
         }
