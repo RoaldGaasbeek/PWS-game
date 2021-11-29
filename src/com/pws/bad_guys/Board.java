@@ -2,6 +2,10 @@ package com.pws.bad_guys;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
 
 import javax.swing.*;
@@ -17,8 +21,8 @@ public class Board extends JPanel {
     private static final int FINISH_SCORE = 100;
     private static final int GAME_DURATION = 10;
     private static final int GAME_DURATION_COUNT = GAME_DURATION / (TIMER_DELAY / 1000);
-    private static final int SCORE_GOOD_GUY = 10;
-    private static final int SCORE_BAD_GUY = 20;
+    private static final int SCORE_BAD_GUY = 10;
+    private static final int SCORE_GOOD_GUY = -20;
     private int probabilityBadGuy = 100;
 
     private final Random random;
@@ -27,6 +31,8 @@ public class Board extends JPanel {
     private final JLabel scoreLabel = new JLabel("");
     private int score = 0;
     private int badGuysHit = 0;
+    private int goodGuysHit = 0;
+    private int missed = 0;
     private final JLabel resultLabel = new JLabel("");
     private boolean isRunning = false;
     private int counter = 0;
@@ -37,7 +43,7 @@ public class Board extends JPanel {
     private final JPanel centerPanel = new JPanel();
     private JButton replayButton;
     private JButton mainMenuButton;
-    private JButton OnlyBadGuysButton;
+    private JButton goodGuysButton;
 
 
     public Board() {
@@ -109,7 +115,8 @@ public class Board extends JPanel {
         centerPanel.setBackground(Color.getHSBColor(70f, 10f, 100f));
         centerPanel.add(setupStartText());
         centerPanel.add(createStartButton());
-        centerPanel.add(createGoodGuysButton());
+        goodGuysButton = createGoodGuysButton();
+        centerPanel.add(goodGuysButton);
     }
 
     private void initNorthPanel() {
@@ -123,26 +130,18 @@ public class Board extends JPanel {
 
     private JButton createStartButton() {
         JButton startButton = MenuButton.createMenuButton("Start", true);
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                startGame();
-            }
-        });
+        startButton.addActionListener(actionEvent -> startGame());
         return startButton;
     }
 
     private JButton createGoodGuysButton() {
         JButton goodGuysButton = MenuButton.createMenuButton("add good guys", true);
-        goodGuysButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                probabilityBadGuy = 70;
-            }
+        goodGuysButton.addActionListener(actionEvent -> {
+            probabilityBadGuy = 70;
+            goodGuysButton.setVisible(false);
         });
         return goodGuysButton;
     }
-
 
     private JButton createReplayButton() {
         JButton replayButton = MenuButton.createMenuButton("play again", false);
@@ -218,9 +217,9 @@ public class Board extends JPanel {
         if (!forced) {
             counter++;
 
-            if (!guy.isVisible() && counter > 100) {
-                guy.setVisible(true);
-                counter = random.nextInt(probabilityBadGuy);
+            if (!guy.isVisible() && counter > 10) {
+               //guy.setVisible(true);
+                counter = random.nextInt(7);
                 newBadGuy = true;
             }
         }
@@ -232,7 +231,7 @@ public class Board extends JPanel {
             int newY = random.nextInt(400 - Guy.HEIGHT - yOffset);
             guy.setXY(newX, newY + yOffset);
             guy.setVisible(true);
-            guy.determineType();
+            guy.determineType(probabilityBadGuy);
             repaint();
         }
     }
@@ -245,23 +244,25 @@ public class Board extends JPanel {
             guy.setVisible(false);
 
             if (guy.isBadGuy()) {
-                score += SCORE_GOOD_GUY;
+                score += SCORE_BAD_GUY;
                 badGuysHit++;
                 updateThieves();
                 updateResult(" |  SCORE! Hitting took " + guy.getTime() + " ms");
                 speedScore.processTime(guy.getTime());
             } else {
-                score -= SCORE_BAD_GUY;
+                score += SCORE_GOOD_GUY;
+                goodGuysHit++;
                 updateResult(" |  DON't HIT THE GOOD GUY!");
             }
             updateScore();
 
-            guy.determineType();
+            guy.determineType(probabilityBadGuy);
             counter = random.nextInt(3);
             repaint();
         } else {
             score -= 5;
             updateScore();
+            missed ++;
             updateResult(" |  MISSED!");
         }
 
@@ -283,13 +284,46 @@ public class Board extends JPanel {
     private void gameOver() {
         isRunning = false;
 
-        if (score >= FINISH_SCORE) {
-            updateResult(" |  Game over. You reached the score in " + gameCount * 2 + " seconds.");
-        } else {
+//        if (score >= FINISH_SCORE) {
+//            updateResult(" |  Game over. You reached the score in " + gameCount * 2 + " seconds.");
+//        } else {
             updateResult(" |  Game over. Time is up!");
-        }
+//        }
         mainMenuButton.setVisible(true);
         replayButton.setVisible(true);
+
+        writeResultsToFile(speedScore.getAverage());
+    }
+
+    private static final String RESULTS_FILENAME = "results-bad-guys.csv";
+
+    private void writeResultsToFile( int avgReactionTime) {
+        PrintWriter writer = null;
+        File file = new File(RESULTS_FILENAME);
+        try {
+            // tile sets; number of tiles; number of attempts; bruto duration; netto duration
+            if (file.createNewFile()) {
+                writer = new PrintWriter(new FileWriter(RESULTS_FILENAME));
+                // Write the header
+                writer.println("time;score;bad guys hit;good guys hit;missed;average reaction speed");
+            } else {
+                writer = new PrintWriter(new FileWriter(RESULTS_FILENAME, true));
+            }
+            writer.print( GAME_DURATION + ";");
+            writer.print( score + ";");
+            writer.print( badGuysHit + ";");
+            writer.print( goodGuysHit + ";");
+            writer.print( missed + ";");
+            writer.print( avgReactionTime + ";");
+            writer.println();
+        } catch (IOException e) {
+            // Ignore error, just log the stacktrace
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
     }
 
 
@@ -335,6 +369,5 @@ public class Board extends JPanel {
 
             handleHitAction();
         }
-
     }
 }

@@ -85,9 +85,9 @@ public class Guy {
         return (int)(end - start);
     }
 
-    public void determineType() {
-        int counter = random.nextInt(probabilityBadGuy);
-        isBadGuy = counter!=1;
+    public void determineType( int probabilityBadGuy) {
+        int counter = random.nextInt(100);
+        isBadGuy = counter < probabilityBadGuy;
 
         loadImage();
     }

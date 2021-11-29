@@ -64,4 +64,8 @@ public class SpeedScore extends JPanel {
         }
     }
 
+    public int getAverage() {
+        return avg;
+    }
+
 }
