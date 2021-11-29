@@ -86,7 +86,7 @@ public class Guy {
     }
 
     public void determineType() {
-        int counter = random.nextInt(3);
+        int counter = random.nextInt(probabilityBadGuy);
         isBadGuy = counter!=1;
 
         loadImage();

@@ -15,10 +15,11 @@ public class Board extends JPanel {
     private static final int TIMER_DELAY = 2000;
     private static final int TIMER_DELAY_SHORT = 200;
     private static final int FINISH_SCORE = 100;
-    private static final int GAME_DURATION = 1;
+    private static final int GAME_DURATION = 10;
     private static final int GAME_DURATION_COUNT = GAME_DURATION / (TIMER_DELAY / 1000);
     private static final int SCORE_GOOD_GUY = 10;
     private static final int SCORE_BAD_GUY = 20;
+    private int probabilityBadGuy = 100;
 
     private final Random random;
     private final Guy guy;
@@ -36,7 +37,7 @@ public class Board extends JPanel {
     private final JPanel centerPanel = new JPanel();
     private JButton replayButton;
     private JButton mainMenuButton;
-
+    private JButton OnlyBadGuysButton;
 
 
     public Board() {
@@ -108,6 +109,7 @@ public class Board extends JPanel {
         centerPanel.setBackground(Color.getHSBColor(70f, 10f, 100f));
         centerPanel.add(setupStartText());
         centerPanel.add(createStartButton());
+        centerPanel.add(createGoodGuysButton());
     }
 
     private void initNorthPanel() {
@@ -129,6 +131,18 @@ public class Board extends JPanel {
         });
         return startButton;
     }
+
+    private JButton createGoodGuysButton() {
+        JButton goodGuysButton = MenuButton.createMenuButton("add good guys", true);
+        goodGuysButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                probabilityBadGuy = 70;
+            }
+        });
+        return goodGuysButton;
+    }
+
 
     private JButton createReplayButton() {
         JButton replayButton = MenuButton.createMenuButton("play again", false);
@@ -204,9 +218,9 @@ public class Board extends JPanel {
         if (!forced) {
             counter++;
 
-            if (!guy.isVisible() && counter > 10) {
+            if (!guy.isVisible() && counter > 100) {
                 guy.setVisible(true);
-                counter = random.nextInt(7);
+                counter = random.nextInt(probabilityBadGuy);
                 newBadGuy = true;
             }
         }
