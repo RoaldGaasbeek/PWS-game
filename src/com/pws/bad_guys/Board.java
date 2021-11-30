@@ -19,7 +19,7 @@ public class Board extends JPanel {
     private static final int TIMER_DELAY = 2000;
     private static final int TIMER_DELAY_SHORT = 200;
     private static final int FINISH_SCORE = 100;
-    private static final int GAME_DURATION = 10;
+    private static final int GAME_DURATION = 30;
     private static final int GAME_DURATION_COUNT = GAME_DURATION / (TIMER_DELAY / 1000);
     private static final int SCORE_BAD_GUY = 10;
     private static final int SCORE_GOOD_GUY = -20;
@@ -37,6 +37,7 @@ public class Board extends JPanel {
     private boolean isRunning = false;
     private int counter = 0;
     private int gameCount = 0;
+    boolean hasGoodGuys = false;
 
     private final  JPanel northPanel = new JPanel();
     private final SpeedScore speedScore = new SpeedScore();
@@ -139,6 +140,7 @@ public class Board extends JPanel {
         goodGuysButton.addActionListener(actionEvent -> {
             probabilityBadGuy = 70;
             goodGuysButton.setVisible(false);
+            hasGoodGuys = true;
         });
         return goodGuysButton;
     }
@@ -305,11 +307,12 @@ public class Board extends JPanel {
             if (file.createNewFile()) {
                 writer = new PrintWriter(new FileWriter(RESULTS_FILENAME));
                 // Write the header
-                writer.println("time;score;bad guys hit;good guys hit;missed;average reaction speed");
+                writer.println("time;has good guys;score;bad guys hit;good guys hit;missed;average reaction speed");
             } else {
                 writer = new PrintWriter(new FileWriter(RESULTS_FILENAME, true));
             }
             writer.print( GAME_DURATION + ";");
+            writer.print( hasGoodGuys + ";");
             writer.print( score + ";");
             writer.print( badGuysHit + ";");
             writer.print( goodGuysHit + ";");
