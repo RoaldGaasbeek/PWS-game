@@ -1,0 +1,5 @@
+time;has good guys;score;bad guys hit;good guys hit;missed;average reaction speed
+30;FALSE;105;11;0;1;220
+30;FALSE;100;12;0;5;265
+30;TRUE;50;11;3;0;333
+30;TRUE;80;8;3;0;371
